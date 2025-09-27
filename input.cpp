@@ -395,9 +395,9 @@ bool GetJoystickRepeat(JOYSTICK stick)
 //=====================================================================
 // êUìÆèÓïÒÇÃê›íËèàóù
 //=====================================================================
-void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nCountVibration)
+void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nFrame)
 {
-	g_nCountVibration = nCountVibration;
+	g_nCountVibration = nFrame;
 	g_vibration.wLeftMotorSpeed = wLeftMotorSpeed; // use any value between 0-65535 here
 	g_vibration.wRightMotorSpeed = wRightMotorSpeed; // use any value between 0-65535 here
 	XInputSetState(0, &g_vibration);

@@ -19,7 +19,7 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define NUM_KEY_MAX		(256)	// 最大キー数
+#define NUM_KEY_MAX		(256)				// 最大キー数
 #define INPUT_MAX_MAGNITUDE		(32767)		// スティックの最大移動量
 #define INPUT_DEADZONE			(10000)		// スティックのデッドゾーン（0～32767）
 
@@ -49,14 +49,14 @@ typedef enum
 
 typedef enum
 {
-	JOYSTICK_L_UP = 0,	// 左ジョイスティック上
-	JOYSTICK_L_DOWN,		// 左ジョイスティック下
-	JOYSTICK_L_LEFT,		// 左ジョイスティック左
-	JOYSTICK_L_RIGHT,	// 左ジョイスティック右
-	JOYSTICK_R_UP,		// 右ジョイスティック上
-	JOYSTICK_R_DOWN,	// 右ジョイスティック下
-	JOYSTICK_R_LEFT,	// 右ジョイスティック左
-	JOYSTICK_R_RIGHT,	// 右ジョイスティック右
+	JOYSTICK_L_UP = 0,	// Lジョイスティック上
+	JOYSTICK_L_DOWN,	// Lジョイスティック下
+	JOYSTICK_L_LEFT,	// Lジョイスティック左
+	JOYSTICK_L_RIGHT,	// Lジョイスティック右
+	JOYSTICK_R_UP,		// Rジョイスティック上
+	JOYSTICK_R_DOWN,	// Rジョイスティック下
+	JOYSTICK_R_LEFT,	// Rジョイスティック左
+	JOYSTICK_R_RIGHT,	// Rジョイスティック右
 	JOYSTICK_MAX
 }JOYSTICK;
 
@@ -89,6 +89,6 @@ bool GetJoypadRelease(JOYKEY key);
 bool GetJoypadRepeat(JOYKEY key);
 bool GetJoystickPress(JOYSTICK stick);
 bool GetJoystickRepeat(JOYSTICK stick);
-void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nCountVibration = -1);
+void SetVibration(WORD wLeftMotorSpeed, WORD wRightMotorSpeed, int nFrame = -1);
 
 #endif

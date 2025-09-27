@@ -40,8 +40,8 @@
 //*********************************************************************
 #define SCREEN_WIDTH	(1280)					// 画面幅
 #define SCREEN_HEIGHT	(720)					// 画面高さ
-#define SCREEN_CENTER	(SCREEN_WIDTH / 2)		// 画面中心
-#define SCREEN_VCENTER	(SCREEN_HEIGHT / 2)		// 画面縦中心
+#define SCREEN_CENTER	(SCREEN_WIDTH / 2)		// 画面X軸の中心
+#define SCREEN_VCENTER	(SCREEN_HEIGHT / 2)		// 画面Y軸の中心
 #define WINDOWED		(true)					// ウィンドウ表示
 
 #define FVF_VERTEX_2D		(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)	// 頂点フォーマット[2D]

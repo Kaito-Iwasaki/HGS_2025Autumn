@@ -4,22 +4,30 @@
 // Author:岩崎桧翔
 //
 //=====================================================================
+
+//*********************************************************************
+// 
+// ***** インクルードファイル *****
+// 
+//*********************************************************************
 #include "fade.h"
 #include "input.h"
 
-// マクロ定義
-#define TEXTURE_POS_X			(SCREEN_WIDTH / 2)
-#define TEXTURE_POS_Y			(SCREEN_HEIGHT / 2)
+//*********************************************************************
+// 
+// ***** マクロ定義 *****
+// 
+//*********************************************************************
+#define INIT_COLOR			D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);	// フェード色
+#define FADE_SCALE			(0.025f)	// フェード速度
 
-#define FADE_SCALE				(0.025f)
-
-// グローバル変数宣言
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffFade = NULL;				// 頂点バッファへのポインタ
+//*********************************************************************
+// 
+// ***** グローバル変数 *****
+// 
+//*********************************************************************
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffFade = NULL;
 FADE g_fade;
-SCENE g_sceneNext;
-D3DXCOLOR g_colorFade;
-float g_fFadeScale;
-bool g_bStopSound = true;
 
 //=====================================================================
 // 初期化処理
@@ -32,11 +40,15 @@ void InitFade(SCENE sceneNext)
 	// デバイスの取得
 	pDevice = GetDevice();
 
-	// 変数の初期化
-	g_fade = FADE_IN;
-	g_sceneNext = sceneNext;
-	g_colorFade = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-	g_fFadeScale = FADE_SCALE;
+	// フェード構造体の初期化
+	memset(&g_fade, 0, sizeof(FADE));
+	g_fade.obj.pos = D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f);
+	g_fade.obj.size = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
+	g_fade.obj.color = INIT_COLOR;
+	g_fade.state = FADESTATE_IN;
+	g_fade.sceneNext = sceneNext;
+	g_fade.fFadeScale = FADE_SCALE;
+	g_fade.bStopSound = false;
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(
@@ -48,33 +60,7 @@ void InitFade(SCENE sceneNext)
 		NULL
 	);
 
-	// 頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
-
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
-
-	// 頂点カラーの設定
-	pVtx[0].col = g_colorFade;
-	pVtx[1].col = g_colorFade;
-	pVtx[2].col = g_colorFade;
-	pVtx[3].col = g_colorFade;
-
-	// 頂点バッファをアンロック
-	g_pVtxBuffFade->Unlock();
-
-	// モードの設定
-	SetScene(g_sceneNext);
-	SetFade(g_sceneNext);
+	SetScene(sceneNext);
 }
 
 //=====================================================================
@@ -95,61 +81,41 @@ void UninitFade(void)
 //=====================================================================
 void UpdateFade(void)
 {
-	VERTEX_2D* pVtx;
-
-	// 頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);
-
-	if (g_fade != FADE_NONE)
+	if (g_fade.state != FADESTATE_NONE)
 	{
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{
-			if (g_colorFade.a > 0 && g_colorFade.a < 1)
+			if (g_fade.obj.color.a > 0 && g_fade.obj.color.a < 1)
 			{// Enterキーを押されたら早くする
-				g_fFadeScale = FADE_SCALE * 2;
+				g_fade.fFadeScale = FADE_SCALE * 2;
 			}
 		}
 
-		if (g_fade == FADE_IN)
+		if (g_fade.state == FADESTATE_IN)
 		{// フェードイン
-			g_colorFade.a -= g_fFadeScale;
+			g_fade.obj.color.a -= g_fade.fFadeScale;
 
-			if (g_colorFade.a <= 0.0f)
-			{
-				g_colorFade.a = 0.0f;
-				g_fade = FADE_NONE;
-				g_fFadeScale = FADE_SCALE;
+			if (g_fade.obj.color.a <= 0.0f)
+			{// フェードイン終了
+				g_fade.obj.color.a = 0.0f;
+				g_fade.state = FADESTATE_NONE;
+				g_fade.fFadeScale = FADE_SCALE;
 
 			}
 		}
-		else if (g_fade == FADE_OUT)
+		else if (g_fade.state == FADESTATE_OUT)
 		{// フェードアウト
-			g_colorFade.a += g_fFadeScale;
+			g_fade.obj.color.a += g_fade.fFadeScale;;
 
-			if (g_colorFade.a >= 1.0f)
-			{
-				g_colorFade.a = 1.0f;
-				g_fade = FADE_IN;
+			if (g_fade.obj.color.a >= 1.0f)
+			{// フェードアウト&フェードインへ移行
+				g_fade.obj.color.a = 1.0f;
+				g_fade.state = FADESTATE_IN;
 
-				SetScene(g_sceneNext, g_bStopSound);
+				SetScene(g_fade.sceneNext, g_fade.bStopSound);
 			}
 		}
-
-		// 頂点カラーの設定
-		pVtx[0].col = g_colorFade;
-		pVtx[1].col = g_colorFade;
-		pVtx[2].col = g_colorFade;
-		pVtx[3].col = g_colorFade;
 	}
-	
-	// 頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
-
-	// 頂点バッファをアンロック
-	g_pVtxBuffFade->Unlock();
 }
 
 //=====================================================================
@@ -157,10 +123,20 @@ void UpdateFade(void)
 //=====================================================================
 void DrawFade(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	VERTEX_2D* pVtx;
 
-	// デバイスの取得
-	pDevice = GetDevice();
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点情報の設定
+	SetVertexPos(pVtx, g_fade.obj);
+	SetVertexRHW(pVtx, 1.0f);
+	SetVertexColor(pVtx, g_fade.obj.color);
+	SetVertexTexturePos(pVtx);
+
+	// 頂点バッファをアンロック
+	g_pVtxBuffFade->Unlock();
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffFade, 0, sizeof(VERTEX_2D));
@@ -180,13 +156,12 @@ void DrawFade(void)
 //=====================================================================
 void SetFade(SCENE sceneNext, bool bStopSound)
 {
-	if (g_fade == FADE_NONE)
+	if (g_fade.state == FADESTATE_NONE)
 	{
-		g_fade = FADE_OUT;
-		g_sceneNext = sceneNext;
-		g_colorFade = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
-		g_fFadeScale = FADE_SCALE;
-		g_bStopSound = bStopSound;
+		g_fade.state = FADESTATE_OUT;
+		g_fade.sceneNext = sceneNext;
+		g_fade.fFadeScale = FADE_SCALE;
+		g_fade.bStopSound = bStopSound;
 	}
 }
 
@@ -196,12 +171,4 @@ void SetFade(SCENE sceneNext, bool bStopSound)
 FADE GetFade(void)
 {
 	return g_fade;
-}
-
-//=====================================================================
-// 現在のフェードの透明地を取得
-//=====================================================================
-float GetFadeAlpha(void)
-{
-	return (float)g_colorFade.a;
 }
