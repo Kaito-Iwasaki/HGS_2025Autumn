@@ -19,10 +19,10 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	(NULL)		// テクスチャファイル名
+#define TEXTURE_FILENAME	"data\\TEXTURE\\nihaha000.png"		// テクスチャファイル名
 
 #define INIT_PLAYER_POS		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f)
-#define INIT_PLAYER_SIZE	D3DXVECTOR3 (50, 50, 0.0f)
+#define INIT_PLAYER_SIZE	D3DXVECTOR3 (200, 250, 0.0f)
 #define INIT_PLAYER_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_PLAYER_SPEED	(10.0f)
 
@@ -115,7 +115,7 @@ void UpdatePlayer(void)
 	}
 
 	// 位置更新
-	g_player.obj.pos += Normalize(direction) * 10.0f;
+	g_player.obj.pos += Normalize(direction) * g_player.fSpeed;
 
 	// 位置制限
 	Clampf(&g_player.obj.pos.x, 0, SCREEN_WIDTH);
