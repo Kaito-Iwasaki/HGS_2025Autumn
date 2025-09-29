@@ -35,6 +35,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindowed);
 void Uninit(void);
 void Update(void);
 void Draw(void);
+void ToggleFullscreen(HWND hWnd);
 
 //*********************************************************************
 // 
@@ -43,6 +44,8 @@ void Draw(void);
 //*********************************************************************
 LPDIRECT3D9 g_pD3D = NULL;					// Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;		// Direct3Dデバイスへのポインタ
+bool g_isFullscreen = false;				// フルスクリーンの使用状況
+RECT g_windowRect;							// ウィンドウサイズ
 
 //=====================================================================
 // 
@@ -192,6 +195,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				return 0;
 			}
 
+			break;
+
+		case VK_F11:
+			ToggleFullscreen(hWnd);// F11でフルスクリーン
 			break;
 		}
 		break;
@@ -403,4 +410,33 @@ void Draw(void)
 LPDIRECT3DDEVICE9 GetDevice(void)
 {
 	return g_pD3DDevice;
+}
+
+//================================================
+// ウィンドウフルスクリーン処理
+//================================================
+void ToggleFullscreen(HWND hWnd)
+{
+	// 現在のウィンドウスタイルを取得
+	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+	if (g_isFullscreen)
+	{
+		// ウィンドウモードに切り替え
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, g_windowRect.left, g_windowRect.top,
+			g_windowRect.right - g_windowRect.left, g_windowRect.bottom - g_windowRect.top,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_NORMAL);
+	}
+	else
+	{
+		// フルスクリーンモードに切り替え
+		GetWindowRect(hWnd, &g_windowRect);
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_MAXIMIZE);
+	}
+
+	g_isFullscreen = !g_isFullscreen;
 }
