@@ -60,6 +60,7 @@ void InitFade(SCENE sceneNext)
 		NULL
 	);
 
+	// ƒV[ƒ“‚Ìİ’è
 	SetScene(sceneNext);
 }
 

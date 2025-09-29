@@ -14,7 +14,11 @@
 #include "sound.h"
 #include "input.h"
 #include "fade.h"
+
+// シーン
 #include "title.h"
+#include "game.h"
+#include "result.h"
 
 //*********************************************************************
 // 
@@ -22,6 +26,15 @@
 // 
 //*********************************************************************
 SCENE g_currentScene = SCENE_TITLE;		// 現在のシーン
+
+//*********************************************************************
+// 各シーンの処理関数
+//*********************************************************************
+SCENEDATA g_scenes[SCENE_MAX] = {
+	InitTitle, UninitTitle, UpdateTitle, DrawTitle,		// タイトル画面
+	InitGame, UninitGame, UpdateGame, DrawGame,			// ゲーム画面
+	InitResult, UninitResult, UpdateResult, DrawResult,			// ゲーム画面
+};
 
 //=====================================================================
 // 初期化処理
@@ -38,7 +51,10 @@ void InitScene(void)
 void UninitScene(void)
 {
 	// 各シーンの終了処理
-	UninitTitle();
+	for (int nCount = 0; nCount < SCENE_MAX; nCount++)
+	{
+		g_scenes[nCount].Uninit();
+	}
 
 	// フェードのの終了処理
 	UninitFade();
@@ -50,12 +66,7 @@ void UninitScene(void)
 void UpdateScene(void)
 {
 	// 現在のシーンの更新処理
-	switch (g_currentScene)
-	{
-	case SCENE_TITLE:
-		UpdateTitle();
-		break;
-	}
+	g_scenes[g_currentScene].Update();
 
 	// フェードの更新処理
 	UpdateFade();
@@ -67,12 +78,7 @@ void UpdateScene(void)
 void DrawScene(void)
 {
 	// 現在のシーンの描画処理
-	switch (g_currentScene)
-	{
-	case SCENE_TITLE:
-		DrawTitle();
-		break;
-	}
+	g_scenes[g_currentScene].Draw();
 
 	// フェードの描画処理
 	DrawFade();
@@ -84,22 +90,13 @@ void DrawScene(void)
 SCENE SetScene(SCENE nextScene, bool bStopSound)
 {
 	// 現在のシーンを終了
-	switch (g_currentScene)
-	{
-	case SCENE_TITLE:
-		UninitTitle();
-		break;
-	}
+	g_scenes[g_currentScene].Uninit();
 
 	// 新規シーンを初期化
-	switch (nextScene)
-	{
-	case SCENE_TITLE:
-		InitTitle();
-		break;
-	}
+	g_scenes[nextScene].Init();
 
-	g_currentScene = nextScene;		// 現在のシーンを設定
+	// 新規シーンを現在のシーンに設定
+	g_currentScene = nextScene;
 
 	return g_currentScene;
 }

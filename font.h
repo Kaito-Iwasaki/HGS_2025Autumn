@@ -1,17 +1,18 @@
 //=====================================================================
 //
-// baseScene.cppのヘッダファイル [baseScene.h]
+// font.cppのヘッダファイル [font.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _BASESCENE_H_
-#define _BASESCENE_H_
+#ifndef _FONT_H_
+#define _FONT_H_
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
+#include "baseObject.h"
 #include "main.h"
 
 //*********************************************************************
@@ -19,49 +20,58 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-
+#define MAX_FONT		(256)
+#define MAX_TEXTCHAR	(256)
 
 //*********************************************************************
 // 
-// ***** 列挙型 *****
+// ***** マクロ定義 *****
 // 
-//*********************************************************************
-//*********************************************************************
-// シーン列挙型
 //*********************************************************************
 typedef enum
 {
-	SCENE_TITLE = 0,	// タイトル画面
-	SCENE_GAME,			// ゲーム画面
-	SCENE_RESULT,		// リザルト画面
-	SCENE_MAX
-}SCENE;	
+	FONT_LABEL_DEFAULT = 0,
+	FONT_LABEL_DONGURI,
+	FONT_LABEL_MAX
+}FONT_LABEL;
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-//*********************************************************************
-// シーン処理関数構造体
-//*********************************************************************
 typedef struct
 {
-	void (*Init)(void);
-	void (*Uninit)(void);
-	void (*Update)(void);
-	void (*Draw)(void);
-}SCENEDATA;
+	LPD3DXFONT font;
+
+	BASEOBJECT obj;
+	FONT_LABEL type;
+	bool bUsed;
+	int nID;
+	char aText[MAX_TEXTCHAR];
+	UINT format;
+}FONT;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitScene(void);
-void UninitScene(void);
-void UpdateScene(void);
-void DrawScene(void);
-SCENE SetScene(SCENE nextScene, bool bStopSound = true);
+void InitFont(void);
+void UninitFont(void);
+void DrawFont(void);
+FONT* GetFont(void);
+FONT* SetFont(
+	FONT_LABEL type,		// 使用するフォント
+	D3DXVECTOR3 pos,		// 位置
+	D3DXVECTOR3 size,		// サイズ
+	D3DXVECTOR3 rot,		// 回転
+	D3DXCOLOR col,			// 色
+	int nScale,				// テキストのサイズ
+	const char* aText,		// 表示するテキスト
+	UINT format				// テキストフォーマット
+);
+void DeleteFont(FONT* pFont);
+void DeleteFont(void);
 
 #endif

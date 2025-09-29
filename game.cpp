@@ -1,6 +1,6 @@
 //=====================================================================
 // 
-// タイトル画面 [title.h]
+// タイトル画面 [game.h]
 // Author : Kaito Iwasaki
 //
 //=====================================================================
@@ -10,12 +10,10 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "title.h"
+#include "game.h"
 #include "player.h"
 #include "input.h"
 #include "fade.h"
-#include "decal.h"
-#include "font.h"
 
 //*********************************************************************
 // 
@@ -34,58 +32,36 @@
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitTitle(void)
+void InitGame(void)
 {
-	InitDecal();
-	InitFont();
-
-	// タイトル画像を配置
-	SetDecal(
-		DECAL_LABEL_TITLE,
-		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0),
-		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
-		D3DXVECTOR3_ZERO,
-		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
-	);
-
-	// テキストを配置
-	SetFont(
-		FONT_LABEL_DONGURI,
-		D3DXVECTOR3(0, SCREEN_VCENTER, 0),
-		D3DXVECTOR3(SCREEN_WIDTH, 200, 0),
-		D3DXVECTOR3_ZERO,
-		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-		100,
-		"えんたーをおせ",
-		DT_CENTER
-	);
+	InitPlayer();
 }
 
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitTitle(void)
+void UninitGame(void)
 {
-	UninitDecal();
-	UninitFont();
+	UninitPlayer();
 }
 
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdateTitle(void)
+void UpdateGame(void)
 {
+	UpdatePlayer();
+
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
-		SetFade(SCENE_GAME);
+		SetFade(SCENE_RESULT);
 	}
 }
 
 //=====================================================================
 // 終了処理
 //=====================================================================
-void DrawTitle(void)
+void DrawGame(void)
 {
-	DrawDecal();
-	DrawFont();
+	DrawPlayer();
 }

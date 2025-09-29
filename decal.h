@@ -1,17 +1,18 @@
 //=====================================================================
 //
-// baseScene.cppのヘッダファイル [baseScene.h]
+// decal.cppのヘッダファイル [decal.h]
 // Author : Kaito Iwasaki
 // 
 //=====================================================================
-#ifndef _BASESCENE_H_
-#define _BASESCENE_H_
+#ifndef _DECAL_H_
+#define _DECAL_H_
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
+#include "baseObject.h"
 #include "main.h"
 
 //*********************************************************************
@@ -19,49 +20,43 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-
+#define MAX_DECAL		(8)
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-//*********************************************************************
-// シーン列挙型
-//*********************************************************************
 typedef enum
 {
-	SCENE_TITLE = 0,	// タイトル画面
-	SCENE_GAME,			// ゲーム画面
-	SCENE_RESULT,		// リザルト画面
-	SCENE_MAX
-}SCENE;	
+	DECAL_LABEL_NULL = 0,
+	DECAL_LABEL_TITLE,
+	DECAL_LABEL_MAX
+}DECAL_LABEL;
 
 //*********************************************************************
 // 
 // ***** 構造体 *****
 // 
 //*********************************************************************
-//*********************************************************************
-// シーン処理関数構造体
-//*********************************************************************
 typedef struct
 {
-	void (*Init)(void);
-	void (*Uninit)(void);
-	void (*Update)(void);
-	void (*Draw)(void);
-}SCENEDATA;
+	BASEOBJECT obj;
+	bool bUsed;
+	DECAL_LABEL label;
+	int nID;
+}DECAL;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitScene(void);
-void UninitScene(void);
-void UpdateScene(void);
-void DrawScene(void);
-SCENE SetScene(SCENE nextScene, bool bStopSound = true);
-
+void InitDecal(bool bPreload = false);
+void UninitDecal(void);
+void DrawDecal(void);
+DECAL* GetDecal(void);
+DECAL* SetDecal(DECAL_LABEL label, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot, D3DXCOLOR col);
+void DeleteDecal(DECAL* pDecal);
+void DeleteDecal(void);
 #endif

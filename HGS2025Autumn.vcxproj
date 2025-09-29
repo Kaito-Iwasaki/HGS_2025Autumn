@@ -140,10 +140,15 @@
   <ItemGroup>
     <ClInclude Include="baseObject.h" />
     <ClInclude Include="baseScene.h" />
+    <ClInclude Include="collision.h" />
+    <ClInclude Include="decal.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="result.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="util.h" />
@@ -151,10 +156,15 @@
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
     <ClCompile Include="baseScene.cpp" />
+    <ClCompile Include="collision.cpp" />
+    <ClCompile Include="decal.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="font.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="result.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="util.cpp" />

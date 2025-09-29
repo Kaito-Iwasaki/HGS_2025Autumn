@@ -1,6 +1,6 @@
 //=====================================================================
 // 
-// タイトル画面 [title.h]
+// リザルト画面 [result.h]
 // Author : Kaito Iwasaki
 //
 //=====================================================================
@@ -10,7 +10,7 @@
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "title.h"
+#include "result.h"
 #include "player.h"
 #include "input.h"
 #include "fade.h"
@@ -34,7 +34,7 @@
 //=====================================================================
 // 初期化処理
 //=====================================================================
-void InitTitle(void)
+void InitResult(void)
 {
 	InitDecal();
 	InitFont();
@@ -45,18 +45,18 @@ void InitTitle(void)
 		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0),
 		D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0),
 		D3DXVECTOR3_ZERO,
-		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
+		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)
 	);
 
 	// テキストを配置
 	SetFont(
-		FONT_LABEL_DONGURI,
+		FONT_LABEL_DEFAULT,
 		D3DXVECTOR3(0, SCREEN_VCENTER, 0),
 		D3DXVECTOR3(SCREEN_WIDTH, 200, 0),
 		D3DXVECTOR3_ZERO,
-		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
-		100,
-		"えんたーをおせ",
+		D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f),
+		200,
+		"にはは",
 		DT_CENTER
 	);
 }
@@ -64,7 +64,7 @@ void InitTitle(void)
 //=====================================================================
 // 終了処理
 //=====================================================================
-void UninitTitle(void)
+void UninitResult(void)
 {
 	UninitDecal();
 	UninitFont();
@@ -73,18 +73,18 @@ void UninitTitle(void)
 //=====================================================================
 // 更新処理
 //=====================================================================
-void UpdateTitle(void)
+void UpdateResult(void)
 {
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
-		SetFade(SCENE_GAME);
+		SetFade(SCENE_TITLE);
 	}
 }
 
 //=====================================================================
 // 終了処理
 //=====================================================================
-void DrawTitle(void)
+void DrawResult(void)
 {
 	DrawDecal();
 	DrawFont();
