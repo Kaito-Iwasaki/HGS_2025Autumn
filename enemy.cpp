@@ -198,6 +198,10 @@ void UpdateEnemy(void)
 					pEnemy->nCounterState = 0;
 					pEnemy->state = ENEMYSTATE_NORMAL;
 					pEnemy->obj.color = D3DXCOLOR_WHITE;
+					if (pEnemy->nHealth == 1)
+					{
+						pEnemy->obj.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					}
 				}
 				else
 				{
@@ -219,6 +223,7 @@ void UpdateEnemy(void)
 			}
 
 			pEnemy->obj.pos += pEnemy->move;
+			pEnemy->obj.rot.z += pEnemy->move.z * 0.04f;
 		}
 	}
 

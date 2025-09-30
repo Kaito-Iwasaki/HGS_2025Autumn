@@ -43,7 +43,7 @@ TEXTURE_PATH = data\TEXTURE\ENEMY003.jpg	// [3]
 //
 //*************************************************************
 
-ENEMYSPAWN_RAND = 200
+ENEMYSPAWN_RAND = 150
 
 ENEMY_SETTING
 	
@@ -63,7 +63,7 @@ ENEMY_SETTING
 	
 	TEXTURE_NUM = 1
 	
-		HEALTH = 1
+		HEALTH = 2
 		
 		SPD = 1.25
 		
@@ -75,7 +75,7 @@ ENEMY_SETTING
 	
 	TEXTURE_NUM = 2
 	
-		HEALTH = 1
+		HEALTH = 2
 		
 		SPD = 1.5
 		
@@ -87,9 +87,9 @@ ENEMY_SETTING
 	
 	TEXTURE_NUM = 3
 	
-		HEALTH = 1
+		HEALTH = 4
 		
-		SPD = 1.75
+		SPD = 1.65
 		
 		SCORE = 400
 	
