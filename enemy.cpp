@@ -224,13 +224,27 @@ void UpdateEnemy(void)
 
 	g_nCounterEnemy++;
 
+	float aColor[3] = { (float)((rand() % 100) * 0.01f), (float)((rand() % 100) * 0.01f), (float)((rand() % 100) * 0.01f) };
+
+	for (int nCnt = 0; nCnt < 3; nCnt++)
+	{
+		if (aColor[nCnt] <= 0.5f)
+		{
+			aColor[nCnt] *= 1.75f;
+			if (aColor[nCnt] >= 1.0f)
+			{
+				aColor[nCnt] = 1.0f;
+			}
+		}
+	}
+
 	if (rand() % g_nRandSpawn == 0)
 	{
-		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), ENEMY_SPOWN_IN);
+		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), ENEMY_SPOWN_IN, D3DXCOLOR(aColor[0], aColor[1], aColor[2], 1.0f));
 	}
 	else if(rand() % g_nRandSpawn == 1)
 	{
-		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), ENEMY_SPOWN_OUT);
+		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), ENEMY_SPOWN_OUT, D3DXCOLOR(aColor[0], aColor[1], aColor[2], 1.0f));
 	}
 }
 
