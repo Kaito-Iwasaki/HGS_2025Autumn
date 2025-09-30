@@ -57,6 +57,7 @@ typedef struct
 	int nHealth;							// 敵の体力
 	int nCounterState;						// 状態カウンター
 	int nSpawnTime;							// 出現する時間
+	int nTextype;							// テクスチャの種類
 	bool bUse;								// 敵の使用状況
 }ENEMY;
 

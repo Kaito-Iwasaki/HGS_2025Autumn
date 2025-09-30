@@ -15,6 +15,7 @@
 //*********************************************************************
 #define FILENAME_ENEMY			"data\\ENEMY\\ENEMY_DATA.txt"		// ファイル名(敵関連)
 #define ENEMY_SPD				(3.0f)		// 移動速度
+#define MAX_TEXTURE				(20)		// テクスチャの最大数
 #define OUT_RECT				(10)		// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
 #define COUNTERSTATE_DAMAGE		(5)			// ダメージ状態カウンター
@@ -28,11 +29,11 @@
 // 
 //*********************************************************************
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEnemy = NULL;
-LPDIRECT3DTEXTURE9 g_pTexBuffEnemy = NULL;
-ENEMY g_aEnemy[MAX_ENEMY] = {};				// 敵の構造体
-char g_aFileName[MAX_PATH] = {};			// ファイル名
-int g_nCounterEnemyTexNum;					// テクスチャの数
-int g_nCounterEnemy;						// 時間
+LPDIRECT3DTEXTURE9 g_apTexBuffEnemy[MAX_TEXTURE] = {};
+ENEMY g_aEnemy[MAX_ENEMY] = {};							// 敵の構造体
+char g_aFileName[MAX_TEXTURE][MAX_PATH] = {};			// ファイル名
+int g_nCounterEnemyTexNum;								// テクスチャの数
+int g_nCounterEnemy;									// 時間
 
 //*********************************************************************
 // 
@@ -67,6 +68,7 @@ void InitEnemy(void)
 		pEnemy->nHealth = 0;
 		pEnemy->nCounterState = 0;
 		pEnemy->nSpawnTime = -1;
+		pEnemy->nTextype = 0;
 		pEnemy->bUse = false;
 	}
 
@@ -83,11 +85,14 @@ void InitEnemy(void)
 
 	if (g_aFileName != NULL)
 	{
-		D3DXCreateTextureFromFile(
-			pDevice,
-			"data\\TEXTURE\\nihaha000.png",
-			&g_pTexBuffEnemy
-		);
+		for (int n = 0; n < g_nCounterEnemyTexNum; n++)
+		{
+			D3DXCreateTextureFromFile(
+				pDevice,
+				&g_aFileName[n][0],
+				&g_apTexBuffEnemy[n]
+			);
+		}
 	}
 
 	// 頂点バッファの生成
@@ -108,10 +113,13 @@ void InitEnemy(void)
 //=====================================================================
 void UninitEnemy(void)
 {
-	if (g_pTexBuffEnemy != NULL)
-	{// テクスチャの破棄
-		g_pTexBuffEnemy->Release();
-		g_pTexBuffEnemy = NULL;
+	for (int n = 0; n < MAX_TEXTURE; n++)
+	{
+		if (g_apTexBuffEnemy[n] != NULL)
+		{// テクスチャの破棄
+			g_apTexBuffEnemy[n]->Release();
+			g_apTexBuffEnemy[n] = NULL;
+		}
 	}
 
 	if (g_pVtxBuffEnemy != NULL)
@@ -262,7 +270,7 @@ void DrawEnemy(void)
 		if (pEnemy->bUse == true && pEnemy->obj.bVisible == true)
 		{// ポリゴン描画
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTexBuffEnemy);
+			pDevice->SetTexture(0, g_apTexBuffEnemy[pEnemy->nTextype]);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntEnemy, 2);
@@ -437,16 +445,21 @@ int OpenFileEnemy(const char* pFileName)
 			memset(aStr, NULL, sizeof(aStr));
 			(void)fscanf(pFile, "%s", &aStr[0]);
 
-			if (strcmp(aStr, "TEXTURE_PATH") == 0)
-			{
-				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-				(void)fscanf(pFile, "%s", &g_aFileName[0]);
-			}
-
 			if (strcmp(aStr, "TEXTURE_NUM") == 0)
 			{
 				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
 				(void)fscanf(pFile, "%d", &g_nCounterEnemyTexNum);
+
+				for (int n = 0; n < g_nCounterEnemyTexNum; n++)
+				{
+					memset(aStr, NULL, sizeof(aStr));
+					(void)fscanf(pFile, "%s", &aStr[0]);
+					if (strcmp(aStr, "TEXTURE_PATH") == 0)
+					{
+						fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+						(void)fscanf(pFile, "%s", &g_aFileName[n][0]);
+					}
+				}
 			}
 
 			if (strcmp(aStr, "TIME") == 0)
@@ -495,6 +508,14 @@ int OpenFileEnemy(const char* pFileName)
 										(void)fscanf(pFile, "%d", &g_aEnemy[n].nHealth);
 									}
 
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "TEX") == 0)
+									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%d", &g_aEnemy[n].nTextype);
+									}
+
 									g_aEnemy[n].obj.pos = D3DXVECTOR3_ZERO;
 									g_aEnemy[n].move = D3DXVECTOR3_ZERO;
 								}
@@ -523,6 +544,16 @@ int OpenFileEnemy(const char* pFileName)
 										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
 										(void)fscanf(pFile, "%d", &g_aEnemy[n].nHealth);
 									}
+
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "TEX") == 0)
+									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%d", &g_aEnemy[n].nTextype);
+									}
+
+									g_aEnemy[n].spown = ENEMY_SPOWN_OTHER;
 								}
 							}
 
