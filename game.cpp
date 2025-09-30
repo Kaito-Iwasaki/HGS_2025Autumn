@@ -71,7 +71,7 @@ void UpdateGame(void)
 
 	UpdateEnemy();
 
-	if (GetKeyboardTrigger(DIK_RETURN))
+	if (GetEndingTimer() <= 0 || GetFade().state == FADESTATE_NONE)
 	{
 		SetFade(SCENE_RESULT);
 	}

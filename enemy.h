@@ -97,4 +97,10 @@ ENEMY *GetEnemy(void);
 */
 void HitEnemy(ENEMY *pEnemy, int nDamage = 1);
 
+/*
+	敵の出現タイマーの取得
+	return 現在のタイマー
+*/
+int GetEndingTimer(void);
+
 #endif

@@ -16,7 +16,7 @@
 #define FILENAME_ENEMY			"data\\ENEMY\\ENEMY_DATA.txt"		// ファイル名(敵関連)
 #define ENEMY_SPD				(3.0f)		// 移動速度
 #define MAX_TEXTURE				(20)		// テクスチャの最大数
-#define OUT_RECT				(10)		// 画面外から出現する敵の消える範囲
+#define OUT_RECT				(5)			// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
 #define COUNTERSTATE_DAMAGE		(5)			// ダメージ状態カウンター
 #define FILE_TOO_LONG			(0x0001)	// ファイル名が長すぎる場合の返り値
@@ -34,6 +34,7 @@ ENEMY g_aEnemy[MAX_ENEMY] = {};							// 敵の構造体
 char g_aFileName[MAX_TEXTURE][MAX_PATH] = {};			// ファイル名
 int g_nCounterEnemyTexNum;								// テクスチャの数
 int g_nCounterEnemy;									// 時間
+int g_nEndingTime;										// 敵の出現が終了する時間
 
 //*********************************************************************
 // 
@@ -75,6 +76,7 @@ void InitEnemy(void)
 	memset(g_aFileName, NULL, sizeof(g_aFileName));
 	g_nCounterEnemyTexNum = 0;
 	g_nCounterEnemy = 0;
+	g_nEndingTime = 0;
 
 	int Error = OpenFileEnemy(FILENAME_ENEMY);
 	if (Error != FILE_CLEAR)
@@ -220,6 +222,15 @@ void UpdateEnemy(void)
 	}
 
 	g_nCounterEnemy++;
+
+	if (g_nEndingTime > 0)
+	{
+		g_nEndingTime--;
+		if (g_nEndingTime <= 0)
+		{
+			g_nEndingTime = 0;
+		}
+	}
 }
 
 //=====================================================================
@@ -567,7 +578,7 @@ int OpenFileEnemy(const char* pFileName)
 								}
 							}
 
-							g_aEnemy[n].obj.size = D3DXVECTOR3(100.0f, 100.0f, 0.0f);
+							g_aEnemy[n].obj.size = D3DXVECTOR3(50.0f, 50.0f, 0.0f);
 							g_aEnemy[n].nSpawnTime = nTime;
 
 							if (strcmp(aStr, "END_SETENEMY") == 0)
@@ -585,6 +596,12 @@ int OpenFileEnemy(const char* pFileName)
 				}
 			}
 
+			if (strcmp(aStr, "ENDING_TIME") == 0)
+			{
+				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+				(void)fscanf(pFile, "%d", &g_nEndingTime);
+			}
+
 			if (strcmp(aStr, "END_SCRIPT") == 0)
 			{
 				break;
@@ -594,4 +611,14 @@ int OpenFileEnemy(const char* pFileName)
 	
 
 	return FILE_CLEAR;
+}
+
+//=====================================================================
+// 
+// ***** タイマー取得 *****
+// 
+//=====================================================================
+int GetEndingTimer(void)
+{
+	return g_nEndingTime;
 }
