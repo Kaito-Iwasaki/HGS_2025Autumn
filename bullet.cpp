@@ -9,6 +9,7 @@
 #include "enemy.h"
 #include "effect.h"
 #include "input.h"
+#include "baseScene.h"
 #include "collision.h"
 #include "util.h"
 
@@ -181,7 +182,10 @@ void UpdateBullet(void)
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
 			g_bullet.move.x *= -1;
 			g_bUseReflection = true;
-			g_bReflection = true;
+			if (GetCurrentScene() != SCENE_ENDLESS)
+			{
+				g_bReflection = true;
+			}
 		}
 
 		if (g_bullet.obj.pos.y <= 0 || g_bullet.obj.pos.y >= SCREEN_HEIGHT)
@@ -189,7 +193,10 @@ void UpdateBullet(void)
 			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
 			g_bullet.move.y *= -1;
 			g_bUseReflection = true;
-			g_bReflection = true;
+			if (GetCurrentScene() != SCENE_ENDLESS)
+			{
+				g_bReflection = true;
+			}
 		}
 	}
 }
@@ -250,7 +257,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 		g_bullet.move.y = rot.y * INIT_BULLET_SPEED;
 		g_bullet.move.z = rot.z;
 
-		g_bullet.bulletstate = BULLETSTATE_HORLD;
+		g_bullet.bulletstate = BULLETSTATE_MOVE;
 		g_bullet.obj.bVisible = true;
 		g_bullet.bUse = true;
 	}
@@ -300,13 +307,22 @@ void CollisionPlayer(void)
 					}
 					else
 					{
-						float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
 
 						if (g_bUseReflection == true)
 						{
 							pPlayer->nCountHit++;
 
 							g_bullet.move = Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos) * g_bullet.fSpeed;
+
+							if (g_bullet.move.x == 0.0f)
+							{
+								g_bullet.move.x += 0.1f;
+							}
+
+							if (g_bullet.move.y == 0.0f)
+							{
+								g_bullet.move.y += 0.1f;
+							}
 
 							g_bReflection = true;
 
