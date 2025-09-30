@@ -15,6 +15,7 @@
 #include "util.h"
 #include "Bullet.h"
 #include "decal.h"
+#include "fade.h"
 
 //*********************************************************************
 // 
@@ -54,6 +55,7 @@ void InitPlayer(void)
 	g_player.fSpeed = INIT_PLAYER_SPEED;
 	g_player.state = PLAYERSTATE_APPEAR;
 	g_player.bIsHold = true;
+	g_player.nPlayerLeft = INIT_PLAYER_LEFT;
 
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
@@ -145,7 +147,7 @@ void UpdatePlayer(void)
 			{
 				if (g_player.nPlayerLeft < 1)
 				{
-					SetPlayerState(PLAYERSTATE_END);
+					SetFade(SCENE_RESULT);
 				}
 				else
 				{
