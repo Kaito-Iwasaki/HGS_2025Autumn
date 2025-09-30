@@ -58,10 +58,11 @@ void InitBullet(void)
 	g_bullet.obj.size = INIT_BULLET_SIZE;
 	g_bullet.obj.color = INIT_BULLET_COLOR;
 	g_bullet.bulletstate = BULLETSTATE_HORLD;
+	g_bullet.obj.bVisible = true;
 	g_bullet.move = {};
 	g_bullet.fSpeed = INIT_BULLET_SPEED;
 	g_bullet.nHorldNumber = 0;
-	g_bullet.bUse = false;
+	g_bullet.bUse = true;
 
 	g_bUseHorld = true;
 	g_bReflection = false;
@@ -123,7 +124,7 @@ void UpdateBullet(void)
 
 	if (g_bReflection == false)
 	{// もし反射不可なら
-		nReflectionCounter--;				// カウンターを回す
+		nReflectionCounter--;							// カウンターを回す
 		if (nReflectionCounter <= 0)
 		{// 回り切ったら
 			nReflectionCounter = REFLECTION_TIMER;		// カウンターリセット
@@ -223,7 +224,7 @@ void DrawBullet(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_bullet.bUse == true && g_bullet.obj.bVisible == true)
+	if (g_bullet.obj.bVisible == true)
 	{// ポリゴン描画
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTexBuffBullet);
