@@ -200,5 +200,5 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //=====================================================================
 bool CollisionEnemy()
 {
-
+	return false;
 }

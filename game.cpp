@@ -12,6 +12,7 @@
 //*********************************************************************
 #include "game.h"
 #include "player.h"
+#include "bullet.h"
 #include "input.h"
 #include "fade.h"
 
@@ -35,6 +36,8 @@
 void InitGame(void)
 {
 	InitPlayer();
+
+	InitBullet();
 }
 
 //=====================================================================
@@ -43,6 +46,8 @@ void InitGame(void)
 void UninitGame(void)
 {
 	UninitPlayer();
+
+	UninitBullet();
 }
 
 //=====================================================================
@@ -51,6 +56,8 @@ void UninitGame(void)
 void UpdateGame(void)
 {
 	UpdatePlayer();
+
+	UpdateBullet();
 
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
@@ -64,4 +71,6 @@ void UpdateGame(void)
 void DrawGame(void)
 {
 	DrawPlayer();
+
+	DrawBullet();
 }
