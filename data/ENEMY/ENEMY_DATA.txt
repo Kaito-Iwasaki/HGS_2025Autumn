@@ -13,8 +13,8 @@ START_SCRIPT
 
 // 読み込むテクスチャの数を指定
 TEXTURE_NUM = 2
-TEXTURE_PATH = data\\TEXTURE\\nihaha000.png
-TEXTURE_PATH = data\\TEXTURE\\title000.jpg
+TEXTURE_PATH = data\\TEXTURE\\ENEMY001.jpg
+TEXTURE_PATH = data\\TEXTURE\\ENEMY000.jpg
 
 //*************************************************************
 // *** 敵の設置情報関連 ***
