@@ -594,31 +594,31 @@ int OpenFileEnemy(const char* pFileName)
 
 									g_aEnemy[n].spown = ENEMY_SPOWN_OTHER;
 								}
-							}
 
-							g_aEnemy[n].obj.size = D3DXVECTOR3(50.0f, 50.0f, 0.0f);
-							g_aEnemy[n].nSpawnTime = nTime;
+								g_aEnemy[n].obj.size = D3DXVECTOR3(50.0f, 50.0f, 0.0f);
+								g_aEnemy[n].nSpawnTime = nTime;
 
-							if (nCnt > 0)
-							{
-								for (int a = n + 1; a < nCnt - 1; a++)
+								if (nCnt > 0)
 								{
-									g_aEnemy[a].spown = g_aEnemy[n].spown;
-									g_aEnemy[a].obj.pos = g_aEnemy[n].obj.pos;
-									g_aEnemy[a].move = D3DXVECTOR3_ZERO;
-									g_aEnemy[a].nHealth = g_aEnemy[n].nHealth;
-									g_aEnemy[a].nTextype = g_aEnemy[n].nTextype;
-									g_aEnemy[a].obj.size = g_aEnemy[n].obj.size;
-									g_aEnemy[a].nSpawnTime = g_aEnemy[n].nSpawnTime;
-								}
+									for (int a = n + 1; a < nCnt; a++)
+									{
+										g_aEnemy[a].spown = g_aEnemy[n].spown;
+										g_aEnemy[a].obj.pos = g_aEnemy[n].obj.pos;
+										g_aEnemy[a].move = D3DXVECTOR3_ZERO;
+										g_aEnemy[a].nHealth = g_aEnemy[n].nHealth;
+										g_aEnemy[a].nTextype = g_aEnemy[n].nTextype;
+										g_aEnemy[a].obj.size = g_aEnemy[n].obj.size;
+										g_aEnemy[a].nSpawnTime = g_aEnemy[n].nSpawnTime;
+									}
 
-								n += nCnt - 1;
+									n += nCnt - 1;
+									nCnt = 0;
+								}
 							}
 
 							if (strcmp(aStr, "END_SETENEMY") == 0)
 							{
 								n++;
-								nCnt = 0;
 								break;
 							}
 						}
