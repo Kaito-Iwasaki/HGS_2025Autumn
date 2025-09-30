@@ -21,7 +21,7 @@
 #define INIT_BULLET_SIZE	D3DXVECTOR3 (25, 25, 0.0f)
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_BULLET_SPEED	(7.5f)
-#define REFLECTION_TIMER	(6)
+#define REFLECTION_TIMER	(18)
 #define MAX_SPEED			(30.0f)
 #define HORUD_DIFF			(25.0f)
 
