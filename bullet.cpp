@@ -302,6 +302,8 @@ void CollisionPlayer(void)
 
 						if (g_bUseReflection == true)
 						{
+							pPlayer->nCountHit++;
+
 							g_bullet.move = Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos) * g_bullet.fSpeed;
 
 							g_bReflection = true;
@@ -347,7 +349,9 @@ void CollisionEnemy(void)
 	}
 }
 
-
+//=====================================================================
+// ’e‚Ìî•ñæ“¾ˆ—
+//=====================================================================
 BULLET *GetBullet(void)
 {
 	return &g_bullet;
