@@ -344,8 +344,8 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, int nHealth, 
 
 				pEnemy->move.z = Angle(pEnemy->obj.pos, D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f));
 
-				pEnemy->move.x = sinf(pEnemy->move.z) * ENEMY_SPD;
-				pEnemy->move.y = cosf(pEnemy->move.z) * ENEMY_SPD;
+				pEnemy->move.x = sinf(pEnemy->move.z) * g_fSpdNormal;
+				pEnemy->move.y = cosf(pEnemy->move.z) * g_fSpdNormal;
 
 				break;
 
