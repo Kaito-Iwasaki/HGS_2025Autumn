@@ -27,7 +27,16 @@
 // ***** —ñ‹“Œ^ *****
 // 
 //*********************************************************************
-
+typedef enum
+{
+	PLAYERSTATE_APPEAR = 0,
+	PLAYERSTATE_NORMAL,
+	PLAYERSTATE_HOLD,
+	PLAYERSTATE_DAMAGED,
+	PLAYERSTATE_DIED,
+	PLAYERSTATE_END,
+	PLAYERSTATE_MAX
+}PLAYERSTATE;
 
 //*********************************************************************
 // 
@@ -39,8 +48,9 @@
 //*********************************************************************
 typedef struct
 {
-	BASEOBJECT obj;
 	float fSpeed;
+	PLAYERSTATE state;
+	int nCounterState;
 }PLAYER;
 
 //*********************************************************************
@@ -52,5 +62,6 @@ void InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
+void SetPlayerState(PLAYERSTATE state);
 
 #endif

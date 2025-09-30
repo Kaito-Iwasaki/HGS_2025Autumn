@@ -43,5 +43,6 @@
 //*********************************************************************
 bool BoxCollision(BASEOBJECT objA, BASEOBJECT objB);
 bool BoxCollision(D3DXVECTOR3 posA, D3DXVECTOR3 sizeA, D3DXVECTOR3 posB, D3DXVECTOR3 sizeB);
+bool CircleCollision(D3DXVECTOR3 posA, float radA, D3DXVECTOR3 posB, float radB);
 
 #endif

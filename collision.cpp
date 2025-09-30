@@ -11,6 +11,7 @@
 // 
 //*********************************************************************
 #include "collision.h"
+#include "util.h"
 
 //*********************************************************************
 // 
@@ -67,4 +68,12 @@ bool BoxCollision(D3DXVECTOR3 posA, D3DXVECTOR3 sizeA, D3DXVECTOR3 posB, D3DXVEC
 	}
 
 	return false;
+}
+
+//=====================================================================
+// 衝突判定処理｜矩形（位置、サイズ指定）
+//=====================================================================
+bool CircleCollision(D3DXVECTOR3 posA, float radA, D3DXVECTOR3 posB, float radB)
+{
+	return Magnitude(posA, posB) <= radA + radB;
 }
