@@ -15,6 +15,7 @@
 //*********************************************************************
 
 #define ENEMY_SPD				(3.0f)		// 移動速度
+#define OUT_RECT				(10)		// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
 #define COUNTERSTATE_DAMAGE		(5)			// ダメージ状態カウンター
 
@@ -101,6 +102,7 @@ void UninitEnemy(void)
 void UpdateEnemy(void)
 {
 	ENEMY* pEnemy = &g_aEnemy[0];			// 敵の先頭アドレス
+	RECT rect = { SCREEN_CENTER - OUT_RECT , SCREEN_VCENTER - OUT_RECT, SCREEN_WIDTH + OUT_RECT, SCREEN_VCENTER + OUT_RECT };
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, pEnemy++)
 	{
@@ -120,7 +122,7 @@ void UpdateEnemy(void)
 
 			case ENEMY_SPOWN_OUT:
 
-				if (pEnemy->obj.pos == D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f))
+				if (IsObjectOutOfScreen(pEnemy->obj, rect) == false)
 				{
 					pEnemy->bUse = false;
 					pEnemy->obj.bVisible = false;
@@ -185,15 +187,17 @@ void DrawEnemy(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
+	pEnemy = &g_aEnemy[0];			// 敵の先頭アドレス
+
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, pEnemy++)
 	{
 		if (pEnemy->bUse == true && pEnemy->obj.bVisible == true)
 		{// ポリゴン描画
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTexBuffEnemy);
+			pDevice->SetTexture(0, NULL);
 
 			// ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntEnemy, 2);
 		}
 	}
 }
@@ -290,7 +294,7 @@ ENEMY *GetEnemy(void)
 //=====================================================================
 void HitEnemy(ENEMY* pEnemy, int nDamage)
 {
-	pEnemy->nHealth - nDamage;				// 敵の体力をダメージ分減少
+	pEnemy->nHealth -= nDamage;				// 敵の体力をダメージ分減少
 	if (pEnemy->nHealth <= 0)
 	{ // 体力が0以下になった時
 		pEnemy->obj.bVisible = false;		// 不可視状態に
