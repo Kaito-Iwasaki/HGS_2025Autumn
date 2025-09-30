@@ -7,6 +7,7 @@
 #include "enemy.h"
 #include "baseObject.h"
 #include "util.h"
+#include "score.h"
 
 //*********************************************************************
 // 
@@ -14,7 +15,7 @@
 // 
 //*********************************************************************
 #define FILENAME_ENEMY			"data\\ENEMY\\ENEMY_DATA.txt"		// ファイル名(敵関連)
-#define ENEMY_SPD				(1.0f)		// 移動速度
+#define ENEMY_SPD				(0.1f)		// 移動速度
 #define MAX_TEXTURE				(20)		// テクスチャの最大数
 #define OUT_RECT				(5)			// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
@@ -396,6 +397,7 @@ void HitEnemy(ENEMY* pEnemy, int nDamage)
 	{ // 体力が0以下になった時
 		pEnemy->obj.bVisible = false;		// 不可視状態に
 		pEnemy->bUse = false;				// 未使用に
+		AddScore(1000 * (pEnemy->nTextype + 1));
 	}
 	else
 	{ // 体力が0よりも大きければ
@@ -452,6 +454,7 @@ int OpenFileEnemy(const char* pFileName)
 	char aOut[10] = { "OUT" };
 	int nTime = 0;
 	int n = 0;
+	int nCnt = 0;
 
 	if ((int)strlen(pFileName) > MAX_PATH) return FILE_TOO_LONG;
 
@@ -491,6 +494,12 @@ int OpenFileEnemy(const char* pFileName)
 				{
 					memset(aStr, NULL, sizeof(aStr));
 					(void)fscanf(pFile, "%s", &aStr[0]);
+					if (strcmp(aStr, "COUNT") == 0)
+					{
+						memset(aStr, NULL, sizeof(aStr));
+						(void)fscanf(pFile, "%d", &nCnt);
+					}
+
 					if (strcmp(aStr, "START_SETENEMY") == 0)
 					{
 						while (1)
@@ -581,9 +590,26 @@ int OpenFileEnemy(const char* pFileName)
 							g_aEnemy[n].obj.size = D3DXVECTOR3(50.0f, 50.0f, 0.0f);
 							g_aEnemy[n].nSpawnTime = nTime;
 
+							if (nCnt > 0)
+							{
+								for (int a = n + 1; a < nCnt; a++)
+								{
+									g_aEnemy[a].spown = g_aEnemy[n].spown;
+									g_aEnemy[a].obj.pos = g_aEnemy[n].obj.pos;
+									g_aEnemy[a].move = D3DXVECTOR3_ZERO;
+									g_aEnemy[a].nHealth = g_aEnemy[n].nHealth;
+									g_aEnemy[a].nTextype = g_aEnemy[n].nTextype;
+									g_aEnemy[a].obj.size = g_aEnemy[n].obj.size;
+									g_aEnemy[a].nSpawnTime = g_aEnemy[n].nSpawnTime;
+								}
+
+								n += nCnt;
+							}
+
 							if (strcmp(aStr, "END_SETENEMY") == 0)
 							{
 								n++;
+								nCnt = 0;
 								break;
 							}
 						}
