@@ -54,6 +54,7 @@ typedef struct
 	PLAYERSTATE state;
 	int nCounterState;
 	int nPlayerLeft;
+	bool bIsHold;
 }PLAYER;
 
 //*********************************************************************

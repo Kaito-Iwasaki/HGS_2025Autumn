@@ -26,10 +26,24 @@
 
 //*********************************************************************
 // 
+// ***** 列挙型定義 *****
+// 
+//*********************************************************************
+typedef enum
+{
+	TITLESTATE_INTRO = 0,
+	TITLESTATE_NORMAL,
+	TITLESTATE_START
+}TITLESTATE;
+
+//*********************************************************************
+// 
 // ***** グローバル変数 *****
 // 
 //*********************************************************************
-
+FONT* g_pFontStart = NULL;
+int g_nCounterStateTitle;
+TITLESTATE g_stateTitle = TITLESTATE_NORMAL;
 
 //=====================================================================
 // 初期化処理
@@ -38,6 +52,9 @@ void InitTitle(void)
 {
 	InitDecal();
 	InitFont();
+
+	g_nCounterStateTitle = 0;
+	g_stateTitle = TITLESTATE_NORMAL;
 
 	// タイトル画像を配置
 	SetDecal(
@@ -49,14 +66,14 @@ void InitTitle(void)
 	);
 
 	// テキストを配置
-	SetFont(
+	g_pFontStart = SetFont(
 		FONT_LABEL_DONGURI,
 		D3DXVECTOR3(0, SCREEN_VCENTER, 0),
 		D3DXVECTOR3(SCREEN_WIDTH, 200, 0),
 		D3DXVECTOR3_ZERO,
 		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f),
 		100,
-		"えんたーをおせ",
+		"PRESS ENTER",
 		DT_CENTER
 	);
 }
@@ -75,10 +92,36 @@ void UninitTitle(void)
 //=====================================================================
 void UpdateTitle(void)
 {
-	if (GetKeyboardTrigger(DIK_RETURN))
+	g_nCounterStateTitle++;
+	switch (g_stateTitle)
 	{
-		SetFade(SCENE_GAME);
+	case TITLESTATE_NORMAL:
+		if (g_nCounterStateTitle % 30 == 0)
+		{
+			g_pFontStart->obj.bVisible ^= 1;
+		}
+
+		if (GetKeyboardTrigger(DIK_RETURN))
+		{
+			g_stateTitle = TITLESTATE_START;
+			g_nCounterStateTitle = 0;
+		}
+		break;
+
+	case TITLESTATE_START:
+		if (g_nCounterStateTitle % 3 == 0)
+		{
+			g_pFontStart->obj.bVisible ^= 1;
+		}
+
+		if (g_nCounterStateTitle > 60)
+		{
+			SetFade(SCENE_GAME);
+		}
+		break;
 	}
+
+
 }
 
 //=====================================================================

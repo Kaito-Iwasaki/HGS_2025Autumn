@@ -108,6 +108,9 @@
     <ClCompile Include="effect.cpp">
       <Filter>ソース ファイル\GameObject\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル\GameObject\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="effect.h">
       <Filter>ヘッダー ファイル\GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル\GameObject\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
