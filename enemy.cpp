@@ -601,7 +601,7 @@ int OpenFileEnemy(const char* pFileName)
 
 							if (nCnt > 0)
 							{
-								for (int a = n + 1; a < nCnt; a++)
+								for (int a = n + 1; a < nCnt - 1; a++)
 								{
 									g_aEnemy[a].spown = g_aEnemy[n].spown;
 									g_aEnemy[a].obj.pos = g_aEnemy[n].obj.pos;
@@ -612,7 +612,7 @@ int OpenFileEnemy(const char* pFileName)
 									g_aEnemy[a].nSpawnTime = g_aEnemy[n].nSpawnTime;
 								}
 
-								n += nCnt;
+								n += nCnt - 1;
 							}
 
 							if (strcmp(aStr, "END_SETENEMY") == 0)
