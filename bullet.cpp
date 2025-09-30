@@ -190,6 +190,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	{// Žg—p‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
 		g_bullet.obj.pos = pos;
 		g_bullet.obj.rot = rot;
+		g_bullet.bulletstate = BULLETSTATE_MOVE;
 		g_bullet.obj.bVisible = true;
 		g_bullet.bUse = true;
 	}
