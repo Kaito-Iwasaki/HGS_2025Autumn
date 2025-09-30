@@ -49,11 +49,10 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	// ç\ë¢ëÃÇÃèâä˙âª
-	memset(&g_player, 0, sizeof(PLAYER) * PLAYER_NUM);
+	memset(&g_player, 0, sizeof(PLAYER));
 	g_player.fSpeed = INIT_PLAYER_SPEED;
 	g_player.state = PLAYERSTATE_APPEAR;
 
-	memset(&g_player.obj[0], 0, sizeof(BASEOBJECT) * PLAYER_NUM);
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
 		g_player.obj[i].size = INIT_PLAYER_SIZE;
