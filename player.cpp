@@ -53,6 +53,7 @@ void InitPlayer(void)
 	memset(&g_player, 0, sizeof(PLAYER));
 	g_player.fSpeed = INIT_PLAYER_SPEED;
 	g_player.state = PLAYERSTATE_APPEAR;
+	g_player.bIsHold = true;
 
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
@@ -180,6 +181,15 @@ void UpdatePlayer(void)
 		);
 	}
 
+	
+	if (GetKeyboardTrigger(DIK_SPACE))
+	{
+		g_player.bIsHold = true;
+	}
+	else if (GetKeyboardRelease(DIK_SPACE))
+	{
+		g_player.bIsHold = false;
+	}
 }
 
 //=====================================================================
