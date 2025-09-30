@@ -13,11 +13,14 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-
+#define FILENAME_ENEMY			NULL		// ファイル名(敵関連)
 #define ENEMY_SPD				(3.0f)		// 移動速度
 #define OUT_RECT				(10)		// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
 #define COUNTERSTATE_DAMAGE		(5)			// ダメージ状態カウンター
+#define FILE_TOO_LONG			(0x0001)	// ファイル名が長すぎる場合の返り値
+#define FILE_NOT_FOUND			(0x0002)	// ファイルが見つからなかった場合の返り値
+#define FILE_CLEAR				(0x0004)	// 成功時の返り値
 
 //*********************************************************************
 // 
@@ -33,8 +36,8 @@ ENEMY g_aEnemy[MAX_ENEMY] = {};				// 敵の構造体
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-
 void SpownOutOfScreen(ENEMY *pEnemy);
+int OpenFileEnemy(const char *pFileName);
 
 //=====================================================================
 // 
@@ -137,6 +140,40 @@ void UpdateEnemy(void)
 					pEnemy->bUse = false;
 					pEnemy->obj.bVisible = false;
 				}
+
+				break;
+			}
+
+			switch (pEnemy->state)
+			{
+			case ENEMYSTATE_NORMAL:
+
+				break;
+
+			case ENEMYSTATE_DAMAGE:
+
+				pEnemy->nCounterState--;
+				if (pEnemy->nCounterState <= 0)
+				{
+					pEnemy->nCounterState = 0;
+					pEnemy->state = ENEMYSTATE_NORMAL;
+					pEnemy->obj.color = D3DXCOLOR_WHITE;
+				}
+				else
+				{
+					if (pEnemy->nCounterState % 4 < 2)
+					{
+						pEnemy->obj.color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					}
+					else
+					{
+						pEnemy->obj.color = D3DXCOLOR_WHITE;
+					}
+				}
+
+				break;
+
+			case ENEMYSTATE_APPEAR:
 
 				break;
 			}
@@ -338,4 +375,34 @@ void SpownOutOfScreen(ENEMY* pEnemy)
 	}
 	
 	pEnemy->obj.pos = pos;
+}
+
+//=====================================================================
+// 
+// ***** 敵のファイル読み込み処理 *****
+// 
+//=====================================================================
+int OpenFileEnemy(const char* pFileName)
+{
+	FILE *pFile = NULL;
+	ENEMY fEnemy;
+	char aStr[1024] = {};
+
+	memset(&fEnemy, NULL, sizeof(fEnemy));
+
+	if ((int)strlen(pFileName) > MAX_PATH) return FILE_TOO_LONG;
+
+	pFile = fopen(pFileName, "r");
+	if (pFile == NULL) return FILE_NOT_FOUND;
+
+	while (1)
+	{
+		fscanf(pFile, "%s", &aStr[0]);
+		if (strcmp(aStr, "START_SCRIPT") == 0)
+		{
+
+		}
+	}
+
+	return FILE_CLEAR;
 }
