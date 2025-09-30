@@ -34,6 +34,7 @@ typedef enum
 	SCENE_TITLE = 0,	// タイトル画面
 	SCENE_GAME,			// ゲーム画面
 	SCENE_RESULT,		// リザルト画面
+	SCENE_ENDLESS,		// リザルト画面
 	SCENE_MAX
 }SCENE;	
 

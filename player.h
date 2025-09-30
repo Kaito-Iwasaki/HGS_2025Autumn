@@ -54,6 +54,7 @@ typedef struct
 	float fAngle;
 	PLAYERSTATE state;
 	int nCounterState;
+	int nCountHit;
 	int nPlayerLeft;
 	bool bIsHold;
 }PLAYER;

@@ -111,6 +111,9 @@
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\GameObject\UI</Filter>
     </ClCompile>
+    <ClCompile Include="endless.cpp">
+      <Filter>ソース ファイル\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="score.h">
       <Filter>ヘッダー ファイル\GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="endless.h">
+      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

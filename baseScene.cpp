@@ -19,6 +19,7 @@
 #include "title.h"
 #include "game.h"
 #include "result.h"
+#include "endless.h"
 
 //*********************************************************************
 // 
@@ -31,9 +32,10 @@ SCENE g_currentScene = SCENE_TITLE;		// 現在のシーン
 // 各シーンの処理関数
 //*********************************************************************
 SCENEDATA g_scenes[SCENE_MAX] = {
-	InitTitle, UninitTitle, UpdateTitle, DrawTitle,		// タイトル画面
-	InitGame, UninitGame, UpdateGame, DrawGame,			// ゲーム画面
+	InitTitle, UninitTitle, UpdateTitle, DrawTitle,			// タイトル画面
+	InitGame, UninitGame, UpdateGame, DrawGame,				// ゲーム画面
 	InitResult, UninitResult, UpdateResult, DrawResult,			// ゲーム画面
+	InitEndless, UninitEndless, UpdateEndless, DrawEndless,		// ゲーム画面
 };
 
 //=====================================================================

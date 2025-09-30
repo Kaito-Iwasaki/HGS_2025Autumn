@@ -164,6 +164,7 @@
     <ClInclude Include="sound.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="endless.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="baseObject.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="decal.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="endless.cpp" />
     <ClCompile Include="enemy.cpp">
       <SubType>
       </SubType>
