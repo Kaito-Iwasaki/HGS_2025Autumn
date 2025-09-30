@@ -600,7 +600,7 @@ int OpenFileEnemy(const char* pFileName)
 
 								if (nCnt > 0)
 								{
-									for (int a = n + 1; a < nCnt; a++)
+									for (int a = n + 1; a < nCnt + n; a++)
 									{
 										g_aEnemy[a].spown = g_aEnemy[n].spown;
 										g_aEnemy[a].obj.pos = g_aEnemy[n].obj.pos;
