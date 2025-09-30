@@ -14,7 +14,7 @@
 // 
 //*********************************************************************
 #define FILENAME_ENEMY			"data\\ENEMY\\ENEMY_DATA.txt"		// ファイル名(敵関連)
-#define ENEMY_SPD				(3.0f)		// 移動速度
+#define ENEMY_SPD				(1.0f)		// 移動速度
 #define MAX_TEXTURE				(20)		// テクスチャの最大数
 #define OUT_RECT				(5)			// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター

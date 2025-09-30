@@ -77,7 +77,7 @@ void UpdateGame(void)
 
 	UpdateEnemy();
 
-	if (GetEndingTimer() <= 0 || GetFade().state == FADESTATE_NONE)
+	if (GetEndingTimer() <= 0 && GetFade().state == FADESTATE_NONE)
 	{
 		SetFade(SCENE_RESULT);
 	}
