@@ -137,7 +137,7 @@ FONT* SetFont(
 	D3DXVECTOR3 size,		// サイズ
 	D3DXVECTOR3 rot,		// 回転
 	D3DXCOLOR col,			// 色
-	int nScale,				// テキストのサイズ
+	int nScale,				// テキストのサイズ4
 	const char* aText,		// 表示するテキスト
 	UINT format				// テキストフォーマット
 )
