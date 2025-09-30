@@ -22,64 +22,64 @@ TEXTURE_NUM = 1
 //*************************************************************
 // 基本
 // 
-// PHASE : フェーズの種類(指定した数だけ発生)
+// TIME_? : 処理を行う時間（フレームで管理）※必ず大きい順に！！！！
 //
 // SETENEMY : 敵の情報を入力する部分 START_で開始 END_で終了 必ず一体ずつSTARTとENDを付けること
 //
 //   敵の設定について
 //
-//   > ENEMY_SPOWN = TRUE -> SPOWNの種類とHEALTHのみを設定
+//   > ENEMY_SPAWN = TRUE -> SPOWNの種類とHEALTHのみを設定
 //
-//   > ENEMY_SPOWN = FALSE -> 敵の出現位置のPOSと移動量のMOVEを設定
+//   > ENEMY_SPAWN = FALSE -> 敵の出現位置のPOSと移動量のMOVEを設定
 //
-//   > SPOWN = IN -> 中心から画面外へ向かって拡散するように出現 画面外に出ると消滅
+//   > SPAWN = IN -> 中心から画面外へ向かって拡散するように出現 画面外に出ると消滅
 //
-//   > SPOWN = OUT -> 画面外のランダムな位置から中心に向かっていくように出現 画面の中心に来ると消滅
+//   > SPAWN = OUT -> 画面外のランダムな位置から中心に向かっていくように出現 画面の中心に来ると消滅
 //
 //*************************************************************
 
 // *** フェーズ1 ***
-START_PHASE1
+TIME = 10
 
 // 敵設置
 START_SETENEMY
 
-ENEMY_SPOWN = TRUE
-SPOWN = IN
+ENEMY_SPAWN = TRUE
+SPAWN = IN
 HEALTH = 10
 
 END_SETENEMY
 
-END_PHASE1
+END_TIME
 
 // フェーズ2
-START_PHASE2
+TIME = 100
 
 // 敵設置
 START_SETENEMY
 
-ENEMY_SPOWN = TRUE
-SPOWN = IN
+ENEMY_SPAWN = TRUE
+SPAWN = IN
 HEALTH = 10
 
 END_SETENEMY
 
-END_PHASE2
+END_TIME
 
 // フェーズ3
-START_PHASE3
+TIME = 150
 
 // 敵設置
 START_SETENEMY
 
-ENEMY_SPOWN = FALSE
+ENEMY_SPAWN = FALSE
 POS = 100.0f 100.0f 0.0f
 MOVE = 0.0f 5.0f 0.0f
 HEALTH = 10
 
 END_SETENEMY
 
-END_PHASE3
+END_TIME
 
 
 END_SCRIPT

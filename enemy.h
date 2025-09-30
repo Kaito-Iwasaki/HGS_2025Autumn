@@ -56,6 +56,7 @@ typedef struct
 	ENEMY_SPOWN spown;						// 敵の発生位置
 	int nHealth;							// 敵の体力
 	int nCounterState;						// 状態カウンター
+	int nSpawnTime;							// 出現する時間
 	bool bUse;								// 敵の使用状況
 }ENEMY;
 

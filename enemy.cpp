@@ -30,6 +30,9 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEnemy = NULL;
 LPDIRECT3DTEXTURE9 g_pTexBuffEnemy = NULL;
 ENEMY g_aEnemy[MAX_ENEMY] = {};				// 敵の構造体
+char g_aFileName[MAX_PATH] = {};			// ファイル名
+int g_nCounterEnemyTexNum;					// テクスチャの数
+int g_nCounterEnemy;						// 時間
 
 //*********************************************************************
 // 
@@ -63,7 +66,28 @@ void InitEnemy(void)
 		pEnemy->spown = ENEMY_SPOWN_IN;
 		pEnemy->nHealth = 0;
 		pEnemy->nCounterState = 0;
+		pEnemy->nSpawnTime = 0;
 		pEnemy->bUse = false;
+	}
+
+	memset(g_aFileName, NULL, sizeof(g_aFileName));
+	g_nCounterEnemyTexNum = 0;
+	g_nCounterEnemy = 0;
+
+	int Error = OpenFileEnemy(FILENAME_ENEMY);
+	if (Error != FILE_CLEAR)
+	{
+		HWND hWnd = GetActiveWindow();
+		MessageBox(hWnd, "error", "", MB_ICONERROR);
+	}
+
+	if (g_aFileName != NULL)
+	{
+		D3DXCreateTextureFromFile(
+			pDevice,
+			&g_aFileName[0],
+			&g_pTexBuffEnemy
+		);
 	}
 
 	// 頂点バッファの生成
@@ -179,6 +203,11 @@ void UpdateEnemy(void)
 			}
 
 			pEnemy->obj.pos += pEnemy->move;
+		}
+
+		if (pEnemy->nSpawnTime == g_nCounterEnemy)
+		{
+			SetEnemy(pEnemy->obj.pos, pEnemy->move, pEnemy->obj.size, pEnemy->nHealth, pEnemy->spown);
 		}
 	}
 }
@@ -385,10 +414,12 @@ void SpownOutOfScreen(ENEMY* pEnemy)
 int OpenFileEnemy(const char* pFileName)
 {
 	FILE *pFile = NULL;
-	ENEMY fEnemy;
+	ENEMY *pEnemy = &g_aEnemy[0];
 	char aStr[1024] = {};
-
-	memset(&fEnemy, NULL, sizeof(fEnemy));
+	char aTrash[100] = {};
+	char aIn[10] = { "IN" };
+	char aOut[10] = { "OUT" };
+	int nTime = 0;
 
 	if ((int)strlen(pFileName) > MAX_PATH) return FILE_TOO_LONG;
 
@@ -397,10 +428,118 @@ int OpenFileEnemy(const char* pFileName)
 
 	while (1)
 	{
-		fscanf(pFile, "%s", &aStr[0]);
+		(void)fscanf(pFile, "%s", &aStr[0]);
 		if (strcmp(aStr, "START_SCRIPT") == 0)
 		{
+			while (1)
+			{
+				(void)fscanf(pFile, "%s", &aStr[0]);
+				if (strcmp(aStr, "TEXTURE_PATH") == 0)
+				{
+					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+					(void)fscanf(pFile, "%s", &g_aFileName[0]);
+				}
 
+				(void)fscanf(pFile, "%s", &aStr[0]);
+				if (strcmp(aStr, "TEXTURE_NUM") == 0)
+				{
+					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+					(void)fscanf(pFile, "%d", &g_nCounterEnemyTexNum);
+				}
+
+				(void)fscanf(pFile, "%s", &aStr[0]);
+				if (strcmp(aStr, "TIME") == 0)
+				{
+					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+					(void)fscanf(pFile, "%d", &nTime);
+					while (1)
+					{
+						(void)fscanf(pFile, "%s", &aStr[0]);
+						if (strcmp(aStr, "START_SETENEMY") == 0)
+						{
+							while (1)
+							{
+								(void)fscanf(pFile, "%s", &aStr[0]);
+								if (strcmp(aStr, "ENEMY_SPAWN") == 0)
+								{
+									fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "TRUE") == 0)
+									{
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(aStr, "SPAWN") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%s", &aStr[0]);
+											if (strcmp(aStr, "IN") == 0)
+											{
+												pEnemy->spown = ENEMY_SPOWN_IN;
+											}
+											else if (strcmp(aStr, "OUT") == 0)
+											{
+												pEnemy->spown = ENEMY_SPOWN_OUT;
+											}
+										}
+
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(aStr, "HEALTH") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &pEnemy->nHealth);
+										}
+
+										pEnemy->obj.pos = D3DXVECTOR3_ZERO;
+										pEnemy->move = D3DXVECTOR3_ZERO;
+									}
+									else if (strcmp(aStr, "FALSE") == 0)
+									{
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(aStr, "POS") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%f %f %f", &pEnemy->obj.pos.x, &pEnemy->obj.pos.y, &pEnemy->obj.pos.z);
+										}
+
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(aStr, "MOVE") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%f %f %f", &pEnemy->move.x, &pEnemy->move.y, &pEnemy->move.z);
+										}
+
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(aStr, "HEALTH") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &pEnemy->nHealth);
+										}
+									}
+
+									pEnemy->nSpawnTime = nTime;
+
+									if (strcmp(aStr, "END_SETENEMY") == 0)
+									{
+										pEnemy++;
+										break;
+									}
+								}
+							}
+						}
+
+						(void)fscanf(pFile, "%s", &aStr[0]);
+						if (strcmp(aStr, "END_TIME") == 0)
+						{
+							break;
+						}
+					}
+				}
+
+				(void)fscanf(pFile, "%s", &aStr[0]);
+				if (strcmp(aStr, "END_SCRIPT") == 0)
+				{
+					break;
+				}
+			}
 		}
 	}
 
