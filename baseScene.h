@@ -64,5 +64,6 @@ void UninitScene(void);
 void UpdateScene(void);
 void DrawScene(void);
 SCENE SetScene(SCENE nextScene, bool bStopSound = true);
+SCENE GetCurrentScene(void);
 
 #endif

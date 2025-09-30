@@ -102,3 +102,8 @@ SCENE SetScene(SCENE nextScene, bool bStopSound)
 
 	return g_currentScene;
 }
+
+SCENE GetCurrentScene(void)
+{
+	return g_currentScene;
+}
