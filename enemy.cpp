@@ -333,8 +333,8 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, int nHealth, 
 
 				pEnemy->move.z = (float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f);
 
-				pEnemy->move.x = sinf(pEnemy->move.z) * ENEMY_SPD;
-				pEnemy->move.y = cosf(pEnemy->move.z) * ENEMY_SPD;
+				pEnemy->move.x = sinf(pEnemy->move.z) * g_fSpdNormal;
+				pEnemy->move.y = cosf(pEnemy->move.z) * g_fSpdNormal;
 
 				break;
 
@@ -505,6 +505,7 @@ int OpenFileEnemy(const char* pFileName)
 					if (strcmp(aStr, "COUNT") == 0)
 					{
 						memset(aStr, NULL, sizeof(aStr));
+						fread(&aTrash[0], 1, sizeof(aTrash), pFile);
 						(void)fscanf(pFile, "%d", &nCnt);
 					}
 
