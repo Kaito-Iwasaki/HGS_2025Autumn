@@ -12,7 +12,7 @@ START_SCRIPT
 //*************************************************************
 
 // テクスチャの入っているディレクトリパスを指定
-TEXTURE_PATH = data\\TEXTURE\\ENEMY
+TEXTURE_PATH = data\\TEXTURE\\nihaha000.png
 
 // 読み込むテクスチャの数を指定
 TEXTURE_NUM = 1
@@ -59,7 +59,7 @@ TIME = 100
 START_SETENEMY
 
 ENEMY_SPAWN = TRUE
-SPAWN = IN
+SPAWN = OUT
 HEALTH = 10
 
 END_SETENEMY
@@ -73,8 +73,8 @@ TIME = 150
 START_SETENEMY
 
 ENEMY_SPAWN = FALSE
-POS = 100.0f 100.0f 0.0f
-MOVE = 0.0f 5.0f 0.0f
+POS = 100.0 100.0 0.0
+MOVE = 0.0 5.0 0.0
 HEALTH = 10
 
 END_SETENEMY

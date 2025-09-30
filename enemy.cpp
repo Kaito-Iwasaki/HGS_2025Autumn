@@ -13,7 +13,7 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define FILENAME_ENEMY			NULL		// ファイル名(敵関連)
+#define FILENAME_ENEMY			"data\\ENEMY\\ENEMY_DATA.txt"		// ファイル名(敵関連)
 #define ENEMY_SPD				(3.0f)		// 移動速度
 #define OUT_RECT				(10)		// 画面外から出現する敵の消える範囲
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
@@ -66,7 +66,7 @@ void InitEnemy(void)
 		pEnemy->spown = ENEMY_SPOWN_IN;
 		pEnemy->nHealth = 0;
 		pEnemy->nCounterState = 0;
-		pEnemy->nSpawnTime = 0;
+		pEnemy->nSpawnTime = -1;
 		pEnemy->bUse = false;
 	}
 
@@ -85,7 +85,7 @@ void InitEnemy(void)
 	{
 		D3DXCreateTextureFromFile(
 			pDevice,
-			&g_aFileName[0],
+			"data\\TEXTURE\\nihaha000.png",
 			&g_pTexBuffEnemy
 		);
 	}
@@ -210,6 +210,8 @@ void UpdateEnemy(void)
 			SetEnemy(pEnemy->obj.pos, pEnemy->move, pEnemy->obj.size, pEnemy->nHealth, pEnemy->spown);
 		}
 	}
+
+	g_nCounterEnemy++;
 }
 
 //=====================================================================
@@ -260,7 +262,7 @@ void DrawEnemy(void)
 		if (pEnemy->bUse == true && pEnemy->obj.bVisible == true)
 		{// ポリゴン描画
 			// テクスチャの設定
-			pDevice->SetTexture(0, NULL);
+			pDevice->SetTexture(0, g_pTexBuffEnemy);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntEnemy, 2);
@@ -416,132 +418,139 @@ int OpenFileEnemy(const char* pFileName)
 	FILE *pFile = NULL;
 	ENEMY *pEnemy = &g_aEnemy[0];
 	char aStr[1024] = {};
-	char aTrash[100] = {};
+	char aTrash[3] = {};
 	char aIn[10] = { "IN" };
 	char aOut[10] = { "OUT" };
 	int nTime = 0;
+	int n = 0;
 
 	if ((int)strlen(pFileName) > MAX_PATH) return FILE_TOO_LONG;
 
 	pFile = fopen(pFileName, "r");
 	if (pFile == NULL) return FILE_NOT_FOUND;
 
-	while (1)
+	(void)fscanf(pFile, "%s", &aStr[0]);
+	if (strcmp(aStr, "START_SCRIPT") == 0)
 	{
-		(void)fscanf(pFile, "%s", &aStr[0]);
-		if (strcmp(aStr, "START_SCRIPT") == 0)
+		while (1)
 		{
-			while (1)
+			memset(aStr, NULL, sizeof(aStr));
+			(void)fscanf(pFile, "%s", &aStr[0]);
+
+			if (strcmp(aStr, "TEXTURE_PATH") == 0)
 			{
-				(void)fscanf(pFile, "%s", &aStr[0]);
-				if (strcmp(aStr, "TEXTURE_PATH") == 0)
-				{
-					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-					(void)fscanf(pFile, "%s", &g_aFileName[0]);
-				}
+				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+				(void)fscanf(pFile, "%s", &g_aFileName[0]);
+			}
 
-				(void)fscanf(pFile, "%s", &aStr[0]);
-				if (strcmp(aStr, "TEXTURE_NUM") == 0)
-				{
-					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-					(void)fscanf(pFile, "%d", &g_nCounterEnemyTexNum);
-				}
+			if (strcmp(aStr, "TEXTURE_NUM") == 0)
+			{
+				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+				(void)fscanf(pFile, "%d", &g_nCounterEnemyTexNum);
+			}
 
-				(void)fscanf(pFile, "%s", &aStr[0]);
-				if (strcmp(aStr, "TIME") == 0)
+			if (strcmp(aStr, "TIME") == 0)
+			{
+				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+				(void)fscanf(pFile, "%d", &nTime);
+				while (1)
 				{
-					fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-					(void)fscanf(pFile, "%d", &nTime);
-					while (1)
+					memset(aStr, NULL, sizeof(aStr));
+					(void)fscanf(pFile, "%s", &aStr[0]);
+					if (strcmp(aStr, "START_SETENEMY") == 0)
 					{
-						(void)fscanf(pFile, "%s", &aStr[0]);
-						if (strcmp(aStr, "START_SETENEMY") == 0)
+						while (1)
 						{
-							while (1)
+							memset(aStr, NULL, sizeof(aStr));
+							(void)fscanf(pFile, "%s", &aStr[0]);
+							if (strcmp(aStr, "ENEMY_SPAWN") == 0)
 							{
+								fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+								memset(aStr, NULL, sizeof(aStr));
 								(void)fscanf(pFile, "%s", &aStr[0]);
-								if (strcmp(aStr, "ENEMY_SPAWN") == 0)
+								if (strcmp(aStr, "TRUE") == 0)
 								{
-									fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+									memset(aStr, NULL, sizeof(aStr));
 									(void)fscanf(pFile, "%s", &aStr[0]);
-									if (strcmp(aStr, "TRUE") == 0)
+									if (strcmp(aStr, "SPAWN") == 0)
 									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										memset(aStr, NULL, sizeof(aStr));
 										(void)fscanf(pFile, "%s", &aStr[0]);
-										if (strcmp(aStr, "SPAWN") == 0)
+										if (strcmp(aStr, "IN") == 0)
 										{
-											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-											(void)fscanf(pFile, "%s", &aStr[0]);
-											if (strcmp(aStr, "IN") == 0)
-											{
-												pEnemy->spown = ENEMY_SPOWN_IN;
-											}
-											else if (strcmp(aStr, "OUT") == 0)
-											{
-												pEnemy->spown = ENEMY_SPOWN_OUT;
-											}
+											g_aEnemy[n].spown = ENEMY_SPOWN_IN;
 										}
-
-										(void)fscanf(pFile, "%s", &aStr[0]);
-										if (strcmp(aStr, "HEALTH") == 0)
+										else if (strcmp(aStr, "OUT") == 0)
 										{
-											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-											(void)fscanf(pFile, "%d", &pEnemy->nHealth);
-										}
-
-										pEnemy->obj.pos = D3DXVECTOR3_ZERO;
-										pEnemy->move = D3DXVECTOR3_ZERO;
-									}
-									else if (strcmp(aStr, "FALSE") == 0)
-									{
-										(void)fscanf(pFile, "%s", &aStr[0]);
-										if (strcmp(aStr, "POS") == 0)
-										{
-											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-											(void)fscanf(pFile, "%f %f %f", &pEnemy->obj.pos.x, &pEnemy->obj.pos.y, &pEnemy->obj.pos.z);
-										}
-
-										(void)fscanf(pFile, "%s", &aStr[0]);
-										if (strcmp(aStr, "MOVE") == 0)
-										{
-											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-											(void)fscanf(pFile, "%f %f %f", &pEnemy->move.x, &pEnemy->move.y, &pEnemy->move.z);
-										}
-
-										(void)fscanf(pFile, "%s", &aStr[0]);
-										if (strcmp(aStr, "HEALTH") == 0)
-										{
-											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-											(void)fscanf(pFile, "%d", &pEnemy->nHealth);
+											g_aEnemy[n].spown = ENEMY_SPOWN_OUT;
 										}
 									}
 
-									pEnemy->nSpawnTime = nTime;
-
-									if (strcmp(aStr, "END_SETENEMY") == 0)
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "HEALTH") == 0)
 									{
-										pEnemy++;
-										break;
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%d", &g_aEnemy[n].nHealth);
+									}
+
+									g_aEnemy[n].obj.pos = D3DXVECTOR3_ZERO;
+									g_aEnemy[n].move = D3DXVECTOR3_ZERO;
+								}
+								else if (strcmp(aStr, "FALSE") == 0)
+								{
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "POS") == 0)
+									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%f %f %f", &g_aEnemy[n].obj.pos.x, &g_aEnemy[n].obj.pos.y, &g_aEnemy[n].obj.pos.z);
+									}
+
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "MOVE") == 0)
+									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%f %f %f", &g_aEnemy[n].move.x, &g_aEnemy[n].move.y, &g_aEnemy[n].move.z);
+									}
+
+									memset(aStr, NULL, sizeof(aStr));
+									(void)fscanf(pFile, "%s", &aStr[0]);
+									if (strcmp(aStr, "HEALTH") == 0)
+									{
+										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+										(void)fscanf(pFile, "%d", &g_aEnemy[n].nHealth);
 									}
 								}
 							}
-						}
 
-						(void)fscanf(pFile, "%s", &aStr[0]);
-						if (strcmp(aStr, "END_TIME") == 0)
-						{
-							break;
+							g_aEnemy[n].obj.size = D3DXVECTOR3(100.0f, 100.0f, 0.0f);
+							g_aEnemy[n].nSpawnTime = nTime;
+
+							if (strcmp(aStr, "END_SETENEMY") == 0)
+							{
+								n++;
+								break;
+							}
 						}
 					}
-				}
 
-				(void)fscanf(pFile, "%s", &aStr[0]);
-				if (strcmp(aStr, "END_SCRIPT") == 0)
-				{
-					break;
+					if (strcmp(aStr, "END_TIME") == 0)
+					{
+						break;
+					}
 				}
+			}
+
+			if (strcmp(aStr, "END_SCRIPT") == 0)
+			{
+				break;
 			}
 		}
 	}
+	
 
 	return FILE_CLEAR;
 }
