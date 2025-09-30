@@ -21,11 +21,11 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	NULL		// テクスチャファイル名
+#define TEXTURE_FILENAME	"data\\TEXTURE\\player000.png"		// テクスチャファイル名
 
 #define INIT_PLAYER_POS		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f)
 #define INIT_PLAYER_SIZE	D3DXVECTOR3 (50.0f, 50.0f, 0.0f)
-#define INIT_PLAYER_COLOR	D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)
+#define INIT_PLAYER_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_PLAYER_SPEED	(0.05f)
 #define INIT_PLAYER_LEFT	(3)
 
@@ -84,7 +84,7 @@ void InitPlayer(void)
 	SetDecal(
 		DECAL_LABEL_CIRCLE,
 		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0),
-		D3DXVECTOR3(500, 500, 0),
+		D3DXVECTOR3(PLAYER_POS_RADIUS * 2, PLAYER_POS_RADIUS * 2, 0),
 		D3DXVECTOR3_ZERO,
 		D3DXCOLOR_WHITE
 	);
