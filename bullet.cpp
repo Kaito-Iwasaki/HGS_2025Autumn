@@ -283,7 +283,14 @@ void CollisionPlayer(void)
 				{
 					HitPlayer();
 					g_bullet.bUse = false;
-					g_bullet.obj.bVisible = false;
+					g_bullet.obj.bVisible = true;
+
+					g_bullet.obj.size = INIT_BULLET_SIZE;
+					g_bullet.obj.color = INIT_BULLET_COLOR;
+					g_bullet.bulletstate = BULLETSTATE_HORLD;
+					g_bullet.move = {};
+					g_bullet.fSpeed = INIT_BULLET_SPEED;
+					g_bullet.nHorldNumber = 0;
 					g_bullet.fSpeed = INIT_BULLET_SPEED;
 				}
 				else
