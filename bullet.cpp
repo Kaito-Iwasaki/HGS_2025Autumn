@@ -16,13 +16,14 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define BULLET_TEXTURE_FILENAME	NULL		// テクスチャファイル名
+#define BULLET_TEXTURE_FILENAME	"data\\TEXTURE\\BULLET.png"		// テクスチャファイル名
 
 #define INIT_BULLET_SIZE	D3DXVECTOR3 (25, 25, 0.0f)
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_BULLET_SPEED	(7.5f)
 #define REFLECTION_TIMER	(6)
-#define MAX_SPEED			(20.0f)
+#define MAX_SPEED			(25.0f)
+#define HORUD_DIFF			(25.0f)
 
 //*********************************************************************
 // 
@@ -58,6 +59,7 @@ void InitBullet(void)
 	g_bullet.bulletstate = BULLETSTATE_MOVE;
 	g_bullet.move = {};
 	g_bullet.fSpeed = INIT_BULLET_SPEED;
+	g_bullet.nHorldNumber = 0;
 	g_bullet.bUse = false;
 
 	g_bReflection = false;
@@ -112,10 +114,8 @@ void UninitBullet(void)
 //=====================================================================
 void UpdateBullet(void)
 {
-	if (GetKeyboardTrigger(DIK_F1) == true)
-	{
-		SetEnemy(D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 30.0f, 0.0f), 3, ENEMY_SPOWN_OTHER, D3DXCOLOR_WHITE, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	}
+
+	PLAYER* pPlayer = GetPlayer();
 
 	static int nReflectionCounter = REFLECTION_TIMER;	// 反射のインターバル
 
@@ -131,6 +131,8 @@ void UpdateBullet(void)
 
 	if (g_bullet.bUse == true)
 	{// 使用されていたら
+
+		float fAngle = atan2f(g_bullet.move.x, g_bullet.move.y);
 
 		if (g_bReflection == true)
 		{
@@ -153,7 +155,17 @@ void UpdateBullet(void)
 			break;
 
 		case BULLETSTATE_HORLD:
-
+			if (pPlayer->bIsHold == true)
+			{
+				g_bullet.obj.pos.x = pPlayer->obj[g_bullet.nHorldNumber].pos.x + sinf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
+				g_bullet.obj.pos.y = pPlayer->obj[g_bullet.nHorldNumber].pos.y + cosf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
+			}
+			else
+			{
+				g_bullet.move = Direction(pPlayer->obj[g_bullet.nHorldNumber].rot.z);
+				g_bullet.fSpeed = INIT_BULLET_SPEED;
+				g_bullet.bulletstate = BULLETSTATE_MOVE;
+			}
 			break;
 		}
 
@@ -251,7 +263,7 @@ void CollisionPlayer(void)
 	{
 		if (g_bUseReflection == true)
 		{
-			if (CircleCollision(g_bullet.obj.pos, 5, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
+			if (CircleCollision(g_bullet.obj.pos, 3, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
 			{
 				char aStr[256];
 
@@ -263,20 +275,29 @@ void CollisionPlayer(void)
 
 				if (fDot < -0.7f)
 				{
+					HitPlayer();
 					g_bullet.bUse = false;
 					g_bullet.fSpeed = INIT_BULLET_SPEED;
 				}
 				else
 				{
-					float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
-
-					if (g_bUseReflection == true)
+					if (pPlayer->bIsHold == true)
 					{
-						g_bullet.move = Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos) * g_bullet.fSpeed;
+						g_bullet.bulletstate = BULLETSTATE_HORLD;
+						g_bullet.nHorldNumber = nCntPlayer;
+					}
+					else
+					{
+						float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
 
-						g_bReflection = true;
+						if (g_bUseReflection == true)
+						{
+							g_bullet.move = Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos) * g_bullet.fSpeed;
 
-						g_bUseReflection = false;
+							g_bReflection = true;
+
+							g_bUseReflection = false;
+						}
 					}
 				}
 			}

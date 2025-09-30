@@ -47,6 +47,7 @@ typedef struct
 	BASEOBJECT obj;
 	BULLETSTATE bulletstate;
 	D3DXVECTOR3 move;
+	int nHorldNumber;
 	float fSpeed;
 	bool bUse;
 }BULLET;
