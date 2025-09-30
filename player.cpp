@@ -143,7 +143,7 @@ void UpdatePlayer(void)
 				g_player.obj[j].bVisible = false;
 			}
 
-			if (g_player.nCounterState > 180)
+			if (g_player.nCounterState > 60)
 			{
 				if (g_player.nPlayerLeft < 1)
 				{
