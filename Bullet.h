@@ -64,5 +64,6 @@ void DrawBullet(void);
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 void CollisionPlayer(void);
 void CollisionEnemy(void);
+BULLET* GetBullet(void);
 
 #endif

@@ -139,7 +139,6 @@ void UpdateBullet(void)
 
 		if (g_bReflection == true)
 		{
-
 			g_bullet.fSpeed += 0.35f;
 
 			Clampf(&g_bullet.fSpeed, 0, MAX_SPEED);
@@ -224,7 +223,7 @@ void DrawBullet(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_bullet.obj.bVisible == true)
+	if (g_bullet.obj.bVisible == true && g_bullet.bUse == true)
 	{// ポリゴン描画
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_pTexBuffBullet);
@@ -280,6 +279,7 @@ void CollisionPlayer(void)
 				{
 					HitPlayer();
 					g_bullet.bUse = false;
+					g_bullet.obj.bVisible = false;
 					g_bullet.fSpeed = INIT_BULLET_SPEED;
 				}
 				else
@@ -338,4 +338,10 @@ void CollisionEnemy(void)
 			}
 		}
 	}
+}
+
+
+BULLET *GetBullet(void)
+{
+	return &g_bullet;
 }
