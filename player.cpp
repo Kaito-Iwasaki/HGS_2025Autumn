@@ -13,6 +13,7 @@
 #include "player.h"
 #include "input.h"
 #include "util.h"
+#include "Bullet.h"
 
 //*********************************************************************
 // 
@@ -145,7 +146,10 @@ void UpdatePlayer(void)
 
 	if (GetKeyboardTrigger(DIK_SPACE) || GetJoypadTrigger(JOYKEY_LSHOULDER))
 	{
-
+		SetBullet(
+			g_playerObject[0].pos,
+			Direction(g_playerObject[0].rot.z)
+		);
 	}
 
 }
