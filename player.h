@@ -29,7 +29,8 @@
 //*********************************************************************
 typedef enum
 {
-	PLAYERSTATE_APPEAR = 0,
+	PLAYERSTATE_INIT = 0,
+	PLAYERSTATE_APPEAR,
 	PLAYERSTATE_NORMAL,
 	PLAYERSTATE_HOLD,
 	PLAYERSTATE_DAMAGED,

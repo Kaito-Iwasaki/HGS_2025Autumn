@@ -53,7 +53,7 @@ void InitPlayer(void)
 	// \‘¢‘Ì‚Ì‰Šú‰»
 	memset(&g_player, 0, sizeof(PLAYER));
 	g_player.fSpeed = INIT_PLAYER_SPEED;
-	g_player.state = PLAYERSTATE_APPEAR;
+	g_player.state = PLAYERSTATE_INIT;
 	g_player.bIsHold = true;
 	g_player.nPlayerLeft = INIT_PLAYER_LEFT;
 
@@ -121,6 +121,11 @@ void UpdatePlayer(void)
 		g_player.nCounterState++;
 		switch (g_player.state)
 		{
+		case PLAYERSTATE_INIT:
+			g_player.bIsHold = true;
+			GetBullet()->bUse = true;
+			g_player.state = PLAYERSTATE_APPEAR;
+
 		case PLAYERSTATE_APPEAR:
 			g_player.obj[i].bVisible ^= 1;
 
@@ -151,7 +156,7 @@ void UpdatePlayer(void)
 				}
 				else
 				{
-					SetPlayerState(PLAYERSTATE_APPEAR);
+					SetPlayerState(PLAYERSTATE_INIT);
 				}
 			}
 
