@@ -261,6 +261,11 @@ void SetPlayerState(PLAYERSTATE state)
 
 void HitPlayer(void)
 {
+	if (g_player.state == PLAYERSTATE_INIT) return;
+	if (g_player.state == PLAYERSTATE_APPEAR) return;
+	if (g_player.state == PLAYERSTATE_DIED) return;
+	if (g_player.state == PLAYERSTATE_END) return;
+
 	g_player.nPlayerLeft--;
 
 	SetPlayerState(PLAYERSTATE_DIED);
