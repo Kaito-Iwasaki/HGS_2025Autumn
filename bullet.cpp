@@ -135,7 +135,7 @@ void UpdateBullet(void)
 	if (g_bullet.bUse == true)
 	{// Žg—p‚³‚ê‚Ä‚¢‚½‚ç
 
-		float fAngle = atan2f(g_bullet.move.x, g_bullet.move.y);
+		float fAngle = atan2f(g_bullet.move.x, g_bullet.move.y) - D3DX_PI;
 
 		if (g_bReflection == true)
 		{
@@ -178,6 +178,8 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
 			g_bullet.move.x *= -1;
+			g_bullet.move.x = sinf(fAngle) * g_bullet.fSpeed;
+			g_bullet.move.y = cosf(fAngle) * g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
@@ -186,6 +188,8 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
 			g_bullet.move.y *= -1;
+			g_bullet.move.x = sinf(fAngle) * g_bullet.fSpeed;
+			g_bullet.move.y = cosf(fAngle) * g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
