@@ -20,7 +20,9 @@
 
 #define INIT_BULLET_SIZE	D3DXVECTOR3 (25, 25, 0.0f)
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
-#define INIT_BULLET_SPEED	(10.0f)
+#define INIT_BULLET_SPEED	(5.0f)
+#define REFLECTION_TIMER	(6)
+#define MAX_REFLECTION		(35)
 
 //*********************************************************************
 // 
@@ -30,6 +32,9 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;		// 頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9 g_pTexBuffBullet = NULL;				// テクスチャへのポインタ
 BULLET g_bullet = {};									// 弾の情報
+bool g_bReflection = false;								// 反射したかどうか
+bool g_bUseReflection = false;							// 反射できるかどうか
+int g_nReflectionCount = 0;
 
 //*********************************************************************
 // 
@@ -50,9 +55,13 @@ void InitBullet(void)
 	memset(&g_bullet, 0, sizeof(BASEOBJECT));
 	g_bullet.obj.size = INIT_BULLET_SIZE;
 	g_bullet.obj.color = INIT_BULLET_COLOR;
-	g_bullet.bulletstate = BULLETSTATE_STOP;
+	g_bullet.bulletstate = BULLETSTATE_MOVE;
 	g_bullet.move = {};
 	g_bullet.bUse = false;
+
+	g_bReflection = false;
+	g_bUseReflection = true;
+	g_nReflectionCount = 0;
 
 	// テクスチャの読み込み
 	if (BULLET_TEXTURE_FILENAME)
@@ -107,8 +116,31 @@ void UpdateBullet(void)
 		SetEnemy(D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 30.0f, 0.0f), 3, ENEMY_SPOWN_OTHER, D3DXCOLOR_WHITE, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
+	static int nReflectionCounter = REFLECTION_TIMER;	// 反射のインターバル
+
+	if (g_bReflection == false)
+	{// もし反射不可なら
+		nReflectionCounter--;				// カウンターを回す
+		if (nReflectionCounter <= 0)
+		{// 回り切ったら
+			nReflectionCounter = REFLECTION_TIMER;		// カウンターリセット
+			g_bUseReflection = true;					// 反射可能に
+		}
+	}
+
 	if (g_bullet.bUse == true)
 	{// 使用されていたら
+
+		if (g_bReflection == true)
+		{
+			if (g_nReflectionCount < MAX_REFLECTION)
+			{
+				g_bullet.move.x = g_bullet.move.x * 1.05f;
+				g_bullet.move.y = g_bullet.move.y * 1.05f;
+				g_nReflectionCount++;
+			}
+			g_bReflection = false;
+		}
 
 		// 状態判定
 		switch (g_bullet.bulletstate)
@@ -120,7 +152,7 @@ void UpdateBullet(void)
 			CollisionEnemy();
 			break;
 
-		case BULLETSTATE_STOP:
+		case BULLETSTATE_HORLD:
 			break;
 		}
 
@@ -129,12 +161,16 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
 			g_bullet.move.x *= -1;
+			g_bUseReflection = true;
+			g_bReflection = true;
 		}
 
 		if (g_bullet.obj.pos.y <= 0 || g_bullet.obj.pos.y >= SCREEN_HEIGHT)
 		{
 			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
 			g_bullet.move.y *= -1;
+			g_bUseReflection = true;
+			g_bReflection = true;
 		}
 	}
 
@@ -226,29 +262,35 @@ void CollisionPlayer(void)
 			if (fDot < -0.1)
 			{
 				g_bullet.bUse = false;
+				g_bReflection = 0;
 			}
 			else
 			{
 				float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
 
-				if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
+				if (g_bUseReflection == true)
 				{
-					g_bullet.move.y *= -1;
-				}
+					if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
+					{
+						g_bullet.move.y *= -1;
+					}
 
-				if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
-				{
-					g_bullet.move.y *= -1;
-				}
+					if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
+					{
+						g_bullet.move.y *= -1;
+					}
 
-				if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
-				{
-					g_bullet.move.x *= -1;
-				}
+					if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
+					{
+						g_bullet.move.x *= -1;
+					}
 
-				if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
-				{
-					g_bullet.move.x *= -1;
+					if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
+					{
+						g_bullet.move.x *= -1;
+					}
+
+					g_bUseReflection = false;
 				}
 			}
 		}
@@ -289,6 +331,8 @@ void CollisionEnemy(void)
 				{
 					g_bullet.move.x *= -1;
 				}
+
+				g_bUseReflection = false;
 
 				HitEnemy(pEnemy);
 			}
