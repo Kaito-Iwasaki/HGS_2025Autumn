@@ -38,8 +38,9 @@ DECAL g_aDecal[MAX_DECAL] = {};
 
 const char* g_aDecalFileName[DECAL_LABEL_MAX] = {
 	NULL,
-	"data\\TEXTURE\\title000.jpg",
+	"data\\TEXTURE\\Title.jpg",
 	"data\\TEXTURE\\circle000.png",
+	"data\\TEXTURE\\Result000.png",
 };
 
 //=====================================================================
