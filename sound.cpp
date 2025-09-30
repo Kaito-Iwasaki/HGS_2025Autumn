@@ -34,7 +34,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 
 // サウンドの情報[テクスチャファイル名 | ループ | ループ開始位置]
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] = {
-	
+	"data\\SE\\hit000.wave"
 };
 
 //=============================================================================

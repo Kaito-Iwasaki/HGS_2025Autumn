@@ -15,7 +15,9 @@
 //*****************************************************************************
 typedef enum
 {
-	SOUND_LABEL_NULL = 0,
+	SOUND_LABEL_SE_HIT00 = 0,
+	SOUND_LABEL_SE_HIT01,
+	SOUND_LABEL_SE_EXPLOSION,
 	SOUND_LABEL_MAX
 } SOUND_LABEL;
 

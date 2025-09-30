@@ -39,9 +39,11 @@ TEXTURE_PATH = data\TEXTURE\ENEMY003.jpg
 //
 //*************************************************************
 
+SPD = 0.5
+
 // *** フェーズ1 ***
 TIME = 60
-	COUNT = 3
+	COUNT = 10
 	
 	// 敵設置
 	START_SETENEMY
@@ -53,28 +55,13 @@ TIME = 60
 
 END_TIME
 
-// フェーズ2
-#TIME = 600
-
+TIME = 300
+	COUNT = 10
+	
 	// 敵設置
 	START_SETENEMY
 		ENEMY_SPAWN = TRUE
-		SPAWN = OUT
-		HEALTH = 1
-		TEX = 0
-	END_SETENEMY
-
-END_TIME
-
-// フェーズ3
-#TIME = 600
-
-	// 敵設置
-	START_SETENEMY
-
-	ENEMY_SPAWN = FALSE
-		POS = 1200.0 120.0 0.0
-		MOVE = 0.0 5.0 0.0
+		SPAWN = IN
 		HEALTH = 1
 		TEX = 1
 	END_SETENEMY
