@@ -36,6 +36,7 @@ char g_aFileName[MAX_TEXTURE][MAX_PATH] = {};			// ファイル名
 int g_nCounterEnemyTexNum;								// テクスチャの数
 int g_nCounterEnemy;									// 時間
 int g_nEndingTime;										// 敵の出現が終了する時間
+float g_fSpdNormal;
 
 //*********************************************************************
 // 
@@ -78,6 +79,7 @@ void InitEnemy(void)
 	g_nCounterEnemyTexNum = 0;
 	g_nCounterEnemy = 0;
 	g_nEndingTime = 0;
+	g_fSpdNormal = 0.0f;
 
 	int Error = OpenFileEnemy(FILENAME_ENEMY);
 	if (Error != FILE_CLEAR)
@@ -484,6 +486,12 @@ int OpenFileEnemy(const char* pFileName)
 						(void)fscanf(pFile, "%s", &g_aFileName[n][0]);
 					}
 				}
+			}
+
+			if (strcmp(aStr, "SPD") == 0)
+			{
+				fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+				(void)fscanf(pFile, "%f", &g_fSpdNormal);
 			}
 
 			if (strcmp(aStr, "TIME") == 0)
