@@ -18,6 +18,7 @@
 #include "fade.h"
 #include "decal.h"
 #include "score.h"
+#include "ranking.h"
 
 //*********************************************************************
 // 
@@ -80,6 +81,7 @@ void UpdateGame(void)
 	if (GetEndingTimer() <= 0 && GetFade().state == FADESTATE_NONE)
 	{
 		SetFade(SCENE_RESULT);
+		SaveScore(GetScore());
 	}
 }
 

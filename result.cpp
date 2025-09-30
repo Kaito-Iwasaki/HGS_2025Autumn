@@ -16,6 +16,7 @@
 #include "fade.h"
 #include "decal.h"
 #include "font.h"
+#include "ranking.h"
 
 //*********************************************************************
 // 
@@ -38,6 +39,7 @@ void InitResult(void)
 {
 	InitDecal();
 	InitFont();
+	InitRanking();
 
 	// タイトル画像を配置
 	SetDecal(
@@ -68,6 +70,7 @@ void UninitResult(void)
 {
 	UninitDecal();
 	UninitFont();
+	UninitRanking();
 }
 
 //=====================================================================
@@ -88,4 +91,5 @@ void DrawResult(void)
 {
 	DrawDecal();
 	DrawFont();
+	DrawRanking();
 }
