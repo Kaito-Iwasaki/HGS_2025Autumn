@@ -14,6 +14,7 @@
 #include "player.h"
 #include "bullet.h"
 #include "enemy.h"
+#include "effect.h"
 #include "input.h"
 #include "fade.h"
 #include "decal.h"
@@ -47,6 +48,8 @@ void InitGame(void)
 	InitBullet();
 
 	InitEnemy();
+
+	InitEffect();
 }
 
 //=====================================================================
@@ -63,6 +66,8 @@ void UninitGame(void)
 	UninitBullet();
 
 	UninitEnemy();
+
+	UninitEffect();
 }
 
 //=====================================================================
@@ -77,6 +82,8 @@ void UpdateGame(void)
 	UpdateBullet();
 
 	UpdateEnemy();
+
+	UpdateEffect();
 
 	if (GetEndingTimer() <= 0 && GetFade().state == FADESTATE_NONE)
 	{
@@ -99,4 +106,6 @@ void DrawGame(void)
 	DrawEnemy();
 
 	DrawScore();
+
+	DrawEffect();
 }

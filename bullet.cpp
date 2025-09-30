@@ -7,6 +7,7 @@
 #include "bullet.h"
 #include "player.h"
 #include "enemy.h"
+#include "effect.h"
 #include "input.h"
 #include "collision.h"
 #include "util.h"
@@ -66,7 +67,7 @@ void InitBullet(void)
 
 	g_bUseHorld = true;
 	g_bReflection = false;
-	g_bUseReflection = true;
+	g_bUseReflection = false;
 	g_nReflectionCount = 0;
 
 	// テクスチャの読み込み
@@ -152,6 +153,7 @@ void UpdateBullet(void)
 		case BULLETSTATE_MOVE:
 			// 位置更新
 			g_bullet.obj.pos += g_bullet.move;
+			SetEffect(g_bullet.obj.pos, 0.0f, 0.0f, 0.0f, 0.5f, 100, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 			CollisionPlayer();
 			CollisionEnemy();
 			break;
@@ -161,10 +163,10 @@ void UpdateBullet(void)
 			{
 				g_bullet.obj.pos.x = pPlayer->obj[g_bullet.nHorldNumber].pos.x + sinf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
 				g_bullet.obj.pos.y = pPlayer->obj[g_bullet.nHorldNumber].pos.y + cosf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
-				
 			}
 			else
 			{
+				g_bUseReflection = false;
 				g_bUseHorld = false;
 				g_bullet.move = Direction(pPlayer->obj[g_bullet.nHorldNumber].rot.z);
 				g_bullet.fSpeed = INIT_BULLET_SPEED;
