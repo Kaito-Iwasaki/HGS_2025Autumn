@@ -19,7 +19,7 @@
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define TEXTURE_FILENAME	"data\\TEXTURE\\nihaha000.png"		// テクスチャファイル名
+#define TEXTURE_FILENAME	NULL		// テクスチャファイル名
 
 #define INIT_PLAYER_POS		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f)
 #define INIT_PLAYER_SIZE	D3DXVECTOR3 (200, 250, 0.0f)
