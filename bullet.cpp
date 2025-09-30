@@ -22,7 +22,7 @@
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_BULLET_SPEED	(7.5f)
 #define REFLECTION_TIMER	(6)
-#define MAX_SPEED			(25.0f)
+#define MAX_SPEED			(30.0f)
 #define HORUD_DIFF			(25.0f)
 
 //*********************************************************************
@@ -35,6 +35,7 @@ LPDIRECT3DTEXTURE9 g_pTexBuffBullet = NULL;				// テクスチャへのポインタ
 BULLET g_bullet = {};									// 弾の情報
 bool g_bReflection = false;								// 反射したかどうか
 bool g_bUseReflection = false;							// 反射できるかどうか
+bool g_bUseHorld = false;
 int g_nReflectionCount = 0;
 
 //*********************************************************************
@@ -56,12 +57,13 @@ void InitBullet(void)
 	memset(&g_bullet, 0, sizeof(BASEOBJECT));
 	g_bullet.obj.size = INIT_BULLET_SIZE;
 	g_bullet.obj.color = INIT_BULLET_COLOR;
-	g_bullet.bulletstate = BULLETSTATE_MOVE;
+	g_bullet.bulletstate = BULLETSTATE_HORLD;
 	g_bullet.move = {};
 	g_bullet.fSpeed = INIT_BULLET_SPEED;
 	g_bullet.nHorldNumber = 0;
 	g_bullet.bUse = false;
 
+	g_bUseHorld = true;
 	g_bReflection = false;
 	g_bUseReflection = true;
 	g_nReflectionCount = 0;
@@ -137,7 +139,7 @@ void UpdateBullet(void)
 		if (g_bReflection == true)
 		{
 
-			g_bullet.fSpeed += 0.25f;
+			g_bullet.fSpeed += 0.35f;
 
 			Clampf(&g_bullet.fSpeed, 0, MAX_SPEED);
 
@@ -159,9 +161,11 @@ void UpdateBullet(void)
 			{
 				g_bullet.obj.pos.x = pPlayer->obj[g_bullet.nHorldNumber].pos.x + sinf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
 				g_bullet.obj.pos.y = pPlayer->obj[g_bullet.nHorldNumber].pos.y + cosf(pPlayer->obj[g_bullet.nHorldNumber].rot.z) * HORUD_DIFF;
+				
 			}
 			else
 			{
+				g_bUseHorld = false;
 				g_bullet.move = Direction(pPlayer->obj[g_bullet.nHorldNumber].rot.z);
 				g_bullet.fSpeed = INIT_BULLET_SPEED;
 				g_bullet.bulletstate = BULLETSTATE_MOVE;
@@ -186,8 +190,6 @@ void UpdateBullet(void)
 			g_bReflection = true;
 		}
 	}
-
-
 }
 
 //=====================================================================
@@ -246,7 +248,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 		g_bullet.move.y = rot.y * INIT_BULLET_SPEED;
 		g_bullet.move.z = rot.z;
 
-		g_bullet.bulletstate = BULLETSTATE_MOVE;
+		g_bullet.bulletstate = BULLETSTATE_HORLD;
 		g_bullet.obj.bVisible = true;
 		g_bullet.bUse = true;
 	}
@@ -263,7 +265,7 @@ void CollisionPlayer(void)
 	{
 		if (g_bUseReflection == true)
 		{
-			if (CircleCollision(g_bullet.obj.pos, 3, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
+			if (CircleCollision(g_bullet.obj.pos, 2.5f, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
 			{
 				char aStr[256];
 
@@ -273,7 +275,7 @@ void CollisionPlayer(void)
 
 				OutputDebugString(&aStr[0]);
 
-				if (fDot < -0.7f)
+				if (fDot < 0.0f)
 				{
 					HitPlayer();
 					g_bullet.bUse = false;
@@ -321,13 +323,17 @@ void CollisionEnemy(void)
 
 			if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, pEnemy->obj.pos, pEnemy->obj.size.x / 2) == true)
 			{
-				g_bullet.move = Direction(pEnemy->obj.pos, g_bullet.obj.pos) * g_bullet.fSpeed;
-
-				g_bReflection = true;
-
-				g_bUseReflection = false;
-
 				HitEnemy(pEnemy);
+
+				if (pEnemy->bUse == true)
+				{
+					g_bullet.move = Direction(pEnemy->obj.pos, g_bullet.obj.pos) * g_bullet.fSpeed;
+
+					g_bReflection = true;
+
+					g_bUseReflection = false;
+				}
+
 			}
 		}
 	}
