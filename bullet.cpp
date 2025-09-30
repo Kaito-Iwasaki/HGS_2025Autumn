@@ -104,7 +104,7 @@ void UpdateBullet(void)
 {
 	if (GetKeyboardTrigger(DIK_F1) == true)
 	{
-		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 30.0f, 0.0f), 3, ENEMY_SPOWN_OTHER, D3DXCOLOR_WHITE, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+		SetEnemy(D3DXVECTOR3(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 30.0f, 0.0f), 3, ENEMY_SPOWN_OTHER, D3DXCOLOR_WHITE, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	}
 
 	if (g_bullet.bUse == true)
@@ -116,6 +116,7 @@ void UpdateBullet(void)
 		case BULLETSTATE_MOVE:
 			// 位置更新
 			g_bullet.obj.pos += g_bullet.move;
+			CollisionPlayer();
 			CollisionEnemy();
 			break;
 
@@ -178,7 +179,7 @@ void DrawBullet(void)
 
 		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-		
+
 	}
 }
 
@@ -189,7 +190,7 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 {
 	if (g_bullet.bUse == false)
 	{// 使用されていなければ
-		g_bullet.obj.pos = pos;
+		g_bullet.obj.pos = pos + (rot * 100);
 		g_bullet.obj.rot = rot;
 
 		g_bullet.move.x = rot.x * INIT_BULLET_SPEED;
@@ -207,9 +208,50 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //=====================================================================
 void CollisionPlayer(void)
 {
-	if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 500) == true)
+	PLAYER* pPlayer = GetPlayer();
+
+	for (int nCntPlayer = 0; nCntPlayer < PLAYER_NUM; nCntPlayer++)
 	{
-		g_bullet.move.x *= -1;
+
+		if (CircleCollision(g_bullet.obj.pos, 10, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
+		{
+			char aStr[256];
+
+			float fDot = Dot(Vector3To2(Direction(pPlayer->obj[nCntPlayer].rot.z)), Vector3To2(Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos)));
+
+			sprintf(&aStr[0], "%f\n", fDot);
+
+			OutputDebugString(&aStr[0]);
+
+			if (fDot < -0.1)
+			{
+				g_bullet.bUse = false;
+			}
+			else
+			{
+				float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
+
+				if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
+				{
+					g_bullet.move.y *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
+				{
+					g_bullet.move.y *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
+				{
+					g_bullet.move.x *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
+				{
+					g_bullet.move.x *= -1;
+				}
+			}
+		}
 	}
 }
 
@@ -220,12 +262,34 @@ void CollisionEnemy(void)
 {
 	ENEMY* pEnemy = GetEnemy();
 
-	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, pEnemy++)
 	{
 		if (pEnemy->bUse == true)
 		{
+			float fAngle = atan2f(g_bullet.obj.pos.x - pEnemy->obj.pos.x, g_bullet.obj.pos.y - pEnemy->obj.pos.y);
+
 			if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, pEnemy->obj.pos, pEnemy->obj.size.x / 2) == true)
 			{
+				if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
+				{
+					g_bullet.move.y *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
+				{
+					g_bullet.move.y *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
+				{
+					g_bullet.move.x *= -1;
+				}
+
+				if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
+				{
+					g_bullet.move.x *= -1;
+				}
+
 				HitEnemy(pEnemy);
 			}
 		}
