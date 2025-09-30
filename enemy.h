@@ -55,6 +55,8 @@ typedef struct
 	ENEMYSTATE state;						// 状態
 	ENEMY_SPOWN spown;						// 敵の発生位置
 	int nHealth;							// 敵の体力
+	float spd;								// 敵の速度
+	int nScore;								// 撃破時スコア
 	int nCounterState;						// 状態カウンター
 	int nSpawnTime;							// 出現する時間
 	int nTextype;							// テクスチャの種類
@@ -82,7 +84,7 @@ void DrawEnemy(void);
 	bInversed 反転(基本は未使用)
 	rot 回転角度(基本は0)
 */
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, int nHealth, ENEMY_SPOWN spown, D3DXCOLOR col = D3DXCOLOR_WHITE, bool bInversed = false, D3DXVECTOR3 rot = D3DXVECTOR3_ZERO);
+void SetEnemy(D3DXVECTOR3 size, ENEMY_SPOWN spown, D3DXCOLOR col = D3DXCOLOR_WHITE, bool bInversed = false, D3DXVECTOR3 rot = D3DXVECTOR3_ZERO);
 
 /*
 	敵の情報の取得
