@@ -26,11 +26,11 @@
 #define INIT_PLAYER_SIZE	D3DXVECTOR3 (50.0f, 50.0f, 0.0f)
 #define INIT_PLAYER_COLOR	D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)
 #define INIT_PLAYER_SPEED	(0.05f)
+#define INIT_PLAYER_LEFT	(3)
 
-#define PLAYER_NUM			(2)
 #define PLAYER_POS_RADIUS	(250.0f)
 
-#define PLAYERSTATE_TIME_APPEAR		(60)
+#define PLAYERSTATE_TIME_APPEAR		(120)
 
 //*********************************************************************
 // 
@@ -40,7 +40,6 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;
 LPDIRECT3DTEXTURE9 g_pTexBuffPlayer = NULL;
 PLAYER g_player;
-BASEOBJECT g_playerObject[PLAYER_NUM];
 
 //=====================================================================
 // 初期化処理
@@ -54,12 +53,12 @@ void InitPlayer(void)
 	g_player.fSpeed = INIT_PLAYER_SPEED;
 	g_player.state = PLAYERSTATE_APPEAR;
 
-	memset(&g_playerObject[0], 0, sizeof(BASEOBJECT) * PLAYER_NUM);
+	memset(&g_player.obj[0], 0, sizeof(BASEOBJECT) * PLAYER_NUM);
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		g_playerObject[i].size = INIT_PLAYER_SIZE;
-		g_playerObject[i].color = INIT_PLAYER_COLOR;
-		g_playerObject[i].bVisible = true;
+		g_player.obj[i].size = INIT_PLAYER_SIZE;
+		g_player.obj[i].color = INIT_PLAYER_COLOR;
+		g_player.obj[i].bVisible = true;
 	}
 
 	// テクスチャの読み込み
@@ -112,43 +111,62 @@ void UpdatePlayer(void)
 		switch (g_player.state)
 		{
 		case PLAYERSTATE_APPEAR:
-			g_playerObject[i].bVisible ^= 1;
+			g_player.obj[i].bVisible ^= 1;
 
 			if (g_player.nCounterState > PLAYERSTATE_TIME_APPEAR)
 			{
 				for (int j = 0; j < PLAYER_NUM; j++)
 				{
-					g_playerObject[j].bVisible = true;
+					g_player.obj[j].bVisible = true;
 				}
 				SetPlayerState(PLAYERSTATE_NORMAL);
 			}
 			break;
 
 		case PLAYERSTATE_NORMAL:
-
 			break;
+
+		case PLAYERSTATE_DIED:
+			for (int j = 0; j < PLAYER_NUM; j++)
+			{
+				g_player.obj[j].bVisible = false;
+			}
+
+			if (g_player.nCounterState > 180)
+			{
+				if (g_player.nPlayerLeft < 1)
+				{
+					SetPlayerState(PLAYERSTATE_END);
+				}
+				else
+				{
+					SetPlayerState(PLAYERSTATE_APPEAR);
+				}
+			}
+
+			return;
 		}
 
 		// 移動処理
 		if (GetKeyboardPress(DIK_A) || GetJoypadPress(JOYKEY_LSHOULDER))
 		{// 左
-			g_playerObject[i].rot.z += g_player.fSpeed;
+			g_player.obj[i].rot.z += g_player.fSpeed;
 		}
 		if (GetKeyboardPress(DIK_D) || GetJoypadPress(JOYKEY_RSHOULDER))
 		{// 右
-			g_playerObject[i].rot.z -= g_player.fSpeed;
+			g_player.obj[i].rot.z -= g_player.fSpeed;
 		}
 
 		// 位置更新
-		g_playerObject[i].pos = 
-			D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0) + Direction(g_playerObject[0].rot.z + (D3DX_PI * 2 / PLAYER_NUM * i)) * PLAYER_POS_RADIUS;
+		g_player.obj[i].pos =
+			D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0) + Direction(g_player.obj[0].rot.z + (D3DX_PI * 2 / PLAYER_NUM * i)) * PLAYER_POS_RADIUS;
 	}
 
 	if (GetKeyboardTrigger(DIK_SPACE) || GetJoypadTrigger(JOYKEY_LSHOULDER))
 	{
 		SetBullet(
-			g_playerObject[0].pos,
-			Direction(g_playerObject[0].rot.z)
+			g_player.obj[0].pos,
+			Direction(g_player.obj[0].rot.z)
 		);
 	}
 
@@ -171,9 +189,9 @@ void DrawPlayer(void)
 	// 頂点情報を設定
 	for (int i = 0; i < PLAYER_NUM; i++, pVtx += 4)
 	{
-		SetVertexPos(pVtx, g_playerObject[i]);
+		SetVertexPos(pVtx, g_player.obj[i]);
 		SetVertexRHW(pVtx, 1.0f);
-		SetVertexColor(pVtx, g_playerObject[i].color);
+		SetVertexColor(pVtx, g_player.obj[i].color);
 		SetVertexTexturePos(pVtx);
 	}
 
@@ -188,7 +206,7 @@ void DrawPlayer(void)
 
 	for (int i = 0; i < PLAYER_NUM; i++)
 	{
-		if (g_playerObject[i].bVisible == true)
+		if (g_player.obj[i].bVisible == true)
 		{// ポリゴン描画
 			// テクスチャの設定
 			pDevice->SetTexture(0, g_pTexBuffPlayer);
@@ -200,6 +218,11 @@ void DrawPlayer(void)
 
 }
 
+PLAYER* GetPlayer(void)
+{
+	return &g_player;
+}
+
 void SetPlayerState(PLAYERSTATE state)
 {
 	for (int i = 0; i < PLAYER_NUM; i++)
@@ -207,4 +230,11 @@ void SetPlayerState(PLAYERSTATE state)
 		g_player.state = state;
 		g_player.nCounterState = 0;
 	}
+}
+
+void HitPlayer(void)
+{
+	g_player.nPlayerLeft--;
+
+	SetPlayerState(PLAYERSTATE_DIED);
 }

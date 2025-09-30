@@ -20,7 +20,7 @@
 // ***** É}ÉNÉçíËã` *****
 // 
 //*********************************************************************
-
+#define PLAYER_NUM			(2)
 
 //*********************************************************************
 // 
@@ -48,9 +48,11 @@ typedef enum
 //*********************************************************************
 typedef struct
 {
+	BASEOBJECT obj[PLAYER_NUM];
 	float fSpeed;
 	PLAYERSTATE state;
 	int nCounterState;
+	int nPlayerLeft;
 }PLAYER;
 
 //*********************************************************************
@@ -62,6 +64,8 @@ void InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
+PLAYER* GetPlayer(void);
 void SetPlayerState(PLAYERSTATE state);
+void HitPlayer(void);
 
 #endif
