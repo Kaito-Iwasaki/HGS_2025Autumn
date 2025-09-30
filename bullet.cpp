@@ -162,8 +162,6 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
 			g_bullet.move.x *= -1;
-			g_bullet.move.x *= g_bullet.fSpeed;
-			g_bullet.move.y *= g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
@@ -172,8 +170,6 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
 			g_bullet.move.y *= -1;
-			g_bullet.move.x *= g_bullet.fSpeed;
-			g_bullet.move.y *= g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
