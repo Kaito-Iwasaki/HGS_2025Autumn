@@ -1,39 +1,34 @@
 //=====================================================================
-//
-// decal.cppのヘッダファイル [decal.h]
-// Author : Kaito Iwasaki
 // 
+// particle.cppのヘッダファイル [particle.h]
+// Author : Kaito Iwasaki
+//
 //=====================================================================
-#ifndef _DECAL_H_
-#define _DECAL_H_
+#ifndef _PARTICLE_H_
+#define _PARTICLE_H_		// 二重インクルード防止のマクロ
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "baseObject.h"
 #include "main.h"
+#include "baseObject.h"
+#include "effect.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define MAX_DECAL		(8)
+#define MAX_PARTICLE		(256)
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-typedef enum
-{
-	DECAL_LABEL_NULL = 0,
-	DECAL_LABEL_TITLE,
-	DECAL_LABEL_CIRCLE,
-	DECAL_LABEL_MAX
-}DECAL_LABEL;
+
 
 //*********************************************************************
 // 
@@ -44,20 +39,21 @@ typedef struct
 {
 	BASEOBJECT obj;
 	bool bUsed;
-	DECAL_LABEL label;
-	int nID;
-}DECAL;
+	EFFECTINFO info;
+	float fAngle;
+	float fRange;
+	int nLife;
+	int nNumEffect;
+}PARTICLE;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitDecal(bool bPreload = false);
-void UninitDecal(void);
-void DrawDecal(void);
-DECAL* GetDecal(void);
-DECAL* SetDecal(DECAL_LABEL label, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot, D3DXCOLOR col);
-void DeleteDecal(DECAL* pDecal);
-void DeleteDecal(void);
+void InitParticle(void);
+void UninitParticle(void);
+void UpdateParticle(void);
+void SetParticle(EFFECTINFO info, D3DXVECTOR3 pos, float fAngle, float fRange, int nLife, int nNumEffect);
+
 #endif

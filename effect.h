@@ -1,39 +1,33 @@
 //=====================================================================
-//
-// decal.cppのヘッダファイル [decal.h]
-// Author : Kaito Iwasaki
 // 
+// effect.cppのヘッダファイル [effect.h]
+// Author:
+//
 //=====================================================================
-#ifndef _DECAL_H_
-#define _DECAL_H_
+#ifndef _EFFECT_H_
+#define _EFFECT_H_		// 二重インクルード防止のマクロ
 
 //*********************************************************************
 // 
 // ***** インクルードファイル *****
 // 
 //*********************************************************************
-#include "baseObject.h"
 #include "main.h"
+#include "baseObject.h"
 
 //*********************************************************************
 // 
 // ***** マクロ定義 *****
 // 
 //*********************************************************************
-#define MAX_DECAL		(8)
+#define MAX_EFFECT			(1024)
 
 //*********************************************************************
 // 
 // ***** 列挙型 *****
 // 
 //*********************************************************************
-typedef enum
-{
-	DECAL_LABEL_NULL = 0,
-	DECAL_LABEL_TITLE,
-	DECAL_LABEL_CIRCLE,
-	DECAL_LABEL_MAX
-}DECAL_LABEL;
+
 
 //*********************************************************************
 // 
@@ -42,22 +36,33 @@ typedef enum
 //*********************************************************************
 typedef struct
 {
+	float fSpeed;
+	float fRotSpeed;
+	float fMaxScale;
+	int nMaxLife;
+	float fMaxAlpha;
+	D3DXCOLOR col;
+}EFFECTINFO;
+
+typedef struct
+{
 	BASEOBJECT obj;
 	bool bUsed;
-	DECAL_LABEL label;
-	int nID;
-}DECAL;
+	EFFECTINFO info;
+	float fAngle;
+	float fScale;
+	int nLife;
+}EFFECT;
 
 //*********************************************************************
 // 
 // ***** プロトタイプ宣言 *****
 // 
 //*********************************************************************
-void InitDecal(bool bPreload = false);
-void UninitDecal(void);
-void DrawDecal(void);
-DECAL* GetDecal(void);
-DECAL* SetDecal(DECAL_LABEL label, D3DXVECTOR3 pos, D3DXVECTOR3 size, D3DXVECTOR3 rot, D3DXCOLOR col);
-void DeleteDecal(DECAL* pDecal);
-void DeleteDecal(void);
+void InitEffect(void);
+void UninitEffect(void);
+void UpdateEffect(void);
+void DrawEffect(void);
+void SetEffect(D3DXVECTOR3 pos, float fSpeed, float fRotSpeed, float fAngle, float fScale, int nLife, D3DXCOLOR col);
+
 #endif

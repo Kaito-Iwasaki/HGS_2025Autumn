@@ -43,6 +43,12 @@
     <Filter Include="ヘッダー ファイル\GameObject\UI">
       <UniqueIdentifier>{e8e917d6-c026-4f70-8218-a4b590dd9a23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\GameObject\Effect">
+      <UniqueIdentifier>{81d330e0-cacc-43f3-a0f0-1e45c80099a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\GameObject\Effect">
+      <UniqueIdentifier>{52323a70-921d-45a6-998a-120f79023de3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sound.cpp">
@@ -96,6 +102,12 @@
     <ClCompile Include="ranking.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>ソース ファイル\GameObject\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>ソース ファイル\GameObject\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sound.h">
@@ -148,6 +160,12 @@
     </ClInclude>
     <ClInclude Include="ranking.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
+      <Filter>ヘッダー ファイル\GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>ヘッダー ファイル\GameObject\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

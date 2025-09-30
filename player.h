@@ -50,6 +50,7 @@ typedef struct
 {
 	BASEOBJECT obj[PLAYER_NUM];
 	float fSpeed;
+	float fAngle;
 	PLAYERSTATE state;
 	int nCounterState;
 	int nPlayerLeft;

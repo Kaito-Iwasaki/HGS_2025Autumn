@@ -16,6 +16,7 @@
 #include "enemy.h"
 #include "input.h"
 #include "fade.h"
+#include "decal.h"
 
 //*********************************************************************
 // 
@@ -36,6 +37,8 @@
 //=====================================================================
 void InitGame(void)
 {
+	InitDecal();
+
 	InitPlayer();
 
 	InitBullet();
@@ -48,6 +51,8 @@ void InitGame(void)
 //=====================================================================
 void UninitGame(void)
 {
+	UninitDecal();
+
 	UninitPlayer();
 
 	UninitBullet();
@@ -77,6 +82,8 @@ void UpdateGame(void)
 //=====================================================================
 void DrawGame(void)
 {
+	DrawDecal();
+
 	DrawPlayer();
 
 	DrawBullet();

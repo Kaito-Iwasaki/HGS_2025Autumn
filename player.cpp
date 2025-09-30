@@ -14,6 +14,7 @@
 #include "input.h"
 #include "util.h"
 #include "Bullet.h"
+#include "decal.h"
 
 //*********************************************************************
 // 
@@ -78,6 +79,14 @@ void InitPlayer(void)
 		D3DPOOL_MANAGED,
 		&g_pVtxBuffPlayer,
 		NULL
+	);
+
+	SetDecal(
+		DECAL_LABEL_CIRCLE,
+		D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0),
+		D3DXVECTOR3(500, 500, 0),
+		D3DXVECTOR3_ZERO,
+		D3DXCOLOR_WHITE
 	);
 }
 
@@ -146,19 +155,21 @@ void UpdatePlayer(void)
 			return;
 		}
 
-		// 移動処理
-		if (GetKeyboardPress(DIK_A) || GetJoypadPress(JOYKEY_LSHOULDER))
-		{// 左
-			g_player.obj[i].rot.z += g_player.fSpeed;
-		}
-		if (GetKeyboardPress(DIK_D) || GetJoypadPress(JOYKEY_RSHOULDER))
-		{// 右
-			g_player.obj[i].rot.z -= g_player.fSpeed;
-		}
+		g_player.obj[i].rot.z = g_player.fAngle + (D3DX_PI * 2 / PLAYER_NUM * i);
 
 		// 位置更新
 		g_player.obj[i].pos =
-			D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0) + Direction(g_player.obj[0].rot.z + (D3DX_PI * 2 / PLAYER_NUM * i)) * PLAYER_POS_RADIUS;
+			D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0) + Direction(g_player.obj[i].rot.z) * PLAYER_POS_RADIUS;
+	}
+
+	// 移動処理
+	if (GetKeyboardPress(DIK_A) || GetJoypadPress(JOYKEY_LSHOULDER))
+	{// 左
+		g_player.fAngle += g_player.fSpeed;
+	}
+	if (GetKeyboardPress(DIK_D) || GetJoypadPress(JOYKEY_RSHOULDER))
+	{// 右
+		g_player.fAngle -= g_player.fSpeed;
 	}
 
 	if (GetKeyboardTrigger(DIK_SPACE) || GetJoypadTrigger(JOYKEY_LSHOULDER))

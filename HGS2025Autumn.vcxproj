@@ -146,6 +146,7 @@
     </ClInclude>
     <ClInclude Include="collision.h" />
     <ClInclude Include="decal.h" />
+    <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h">
       <SubType>
       </SubType>
@@ -155,6 +156,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="particle.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="ranking.h" />
     <ClInclude Include="result.h" />
@@ -171,6 +173,7 @@
     </ClCompile>
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="decal.cpp" />
+    <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp">
       <SubType>
       </SubType>
@@ -180,6 +183,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="particle.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="result.cpp" />
