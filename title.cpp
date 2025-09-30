@@ -106,6 +106,11 @@ void UpdateTitle(void)
 			g_stateTitle = TITLESTATE_START;
 			g_nCounterStateTitle = 0;
 		}
+
+		if (GetKeyboardTrigger(DIK_F1))
+		{
+			SetFade(SCENE_ENDLESS);
+		}
 		break;
 
 	case TITLESTATE_START:

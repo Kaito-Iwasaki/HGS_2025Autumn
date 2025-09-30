@@ -19,6 +19,7 @@
 #include "decal.h"
 #include "score.h"
 #include "ranking.h"
+#include "font.h"
 
 //*********************************************************************
 // 
@@ -32,18 +33,33 @@
 // ***** ƒOƒ[ƒoƒ‹•Ï” *****
 // 
 //*********************************************************************
-
+FONT* g_pFontHit = NULL;
 
 //=====================================================================
 // ‰Šú‰»ˆ—
 //=====================================================================
 void InitEndless(void)
 {
+	InitFont();
+
 	InitDecal();
 
 	InitPlayer();
 
 	InitBullet();
+
+	g_pFontHit = SetFont(
+		FONT_LABEL_DONGURI,
+		D3DXVECTOR3(0, SCREEN_VCENTER - 200, 0),
+		D3DXVECTOR3(SCREEN_WIDTH, 200.0f, 0.0f),
+		D3DXVECTOR3_ZERO,
+		D3DXCOLOR_WHITE,
+		100,
+		"",
+		DT_CENTER
+	);
+
+	GetPlayer()->nPlayerLeft = 1;
 }
 
 //=====================================================================
@@ -51,6 +67,8 @@ void InitEndless(void)
 //=====================================================================
 void UninitEndless(void)
 {
+	UninitFont();
+
 	UninitDecal();
 
 	UninitPlayer();
@@ -65,9 +83,9 @@ void UpdateEndless(void)
 {
 	UpdatePlayer();
 
-	UpdateScore();
-
 	UpdateBullet();
+
+	sprintf(&g_pFontHit->aText[0], "%d", GetPlayer()->nCountHit);
 }
 
 //=====================================================================
@@ -78,6 +96,8 @@ void DrawEndless(void)
 	DrawDecal();
 
 	DrawPlayer();
+
+	DrawFont();
 
 	DrawBullet();
 }

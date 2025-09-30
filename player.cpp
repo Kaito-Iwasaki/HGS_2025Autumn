@@ -189,10 +189,10 @@ void UpdatePlayer(void)
 	}
 
 	
-	if (GetKeyboardTrigger(DIK_SPACE))
-	{
-		g_player.bIsHold = true;
-	}
+	//if (GetKeyboardTrigger(DIK_SPACE))
+	//{
+	//	g_player.bIsHold = true;
+	//}
 	else if (GetKeyboardRelease(DIK_SPACE))
 	{
 		g_player.bIsHold = false;
