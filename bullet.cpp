@@ -20,9 +20,9 @@
 
 #define INIT_BULLET_SIZE	D3DXVECTOR3 (25, 25, 0.0f)
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
-#define INIT_BULLET_SPEED	(5.0f)
+#define INIT_BULLET_SPEED	(7.5f)
 #define REFLECTION_TIMER	(6)
-#define MAX_REFLECTION		(35)
+#define MAX_SPEED			(20.0f)
 
 //*********************************************************************
 // 
@@ -57,6 +57,7 @@ void InitBullet(void)
 	g_bullet.obj.color = INIT_BULLET_COLOR;
 	g_bullet.bulletstate = BULLETSTATE_MOVE;
 	g_bullet.move = {};
+	g_bullet.fSpeed = INIT_BULLET_SPEED;
 	g_bullet.bUse = false;
 
 	g_bReflection = false;
@@ -133,12 +134,11 @@ void UpdateBullet(void)
 
 		if (g_bReflection == true)
 		{
-			if (g_nReflectionCount < MAX_REFLECTION)
-			{
-				g_bullet.move.x = g_bullet.move.x * 1.05f;
-				g_bullet.move.y = g_bullet.move.y * 1.05f;
-				g_nReflectionCount++;
-			}
+
+			g_bullet.fSpeed += 0.25f;
+
+			Clampf(&g_bullet.fSpeed, 0, MAX_SPEED);
+
 			g_bReflection = false;
 		}
 
@@ -153,6 +153,7 @@ void UpdateBullet(void)
 			break;
 
 		case BULLETSTATE_HORLD:
+
 			break;
 		}
 
@@ -161,6 +162,8 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
 			g_bullet.move.x *= -1;
+			g_bullet.move.x *= g_bullet.fSpeed;
+			g_bullet.move.y *= g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
@@ -169,6 +172,8 @@ void UpdateBullet(void)
 		{
 			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
 			g_bullet.move.y *= -1;
+			g_bullet.move.x *= g_bullet.fSpeed;
+			g_bullet.move.y *= g_bullet.fSpeed;
 			g_bUseReflection = true;
 			g_bReflection = true;
 		}
@@ -248,52 +253,39 @@ void CollisionPlayer(void)
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYER_NUM; nCntPlayer++)
 	{
-
-		if (CircleCollision(g_bullet.obj.pos, 10, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
+		if (g_bUseReflection == true)
 		{
-			char aStr[256];
-
-			float fDot = Dot(Vector3To2(Direction(pPlayer->obj[nCntPlayer].rot.z)), Vector3To2(Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos)));
-
-			sprintf(&aStr[0], "%f\n", fDot);
-
-			OutputDebugString(&aStr[0]);
-
-			if (fDot < -0.1)
+			if (CircleCollision(g_bullet.obj.pos, 5, pPlayer->obj[nCntPlayer].pos, pPlayer->obj[nCntPlayer].size.x) == true)
 			{
-				g_bullet.bUse = false;
-				g_bReflection = 0;
-			}
-			else
-			{
-				float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
+				char aStr[256];
 
-				if (g_bUseReflection == true)
+				float fDot = Dot(Vector3To2(Direction(pPlayer->obj[nCntPlayer].rot.z)), Vector3To2(Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos)));
+
+				sprintf(&aStr[0], "%f\n", fDot);
+
+				OutputDebugString(&aStr[0]);
+
+				if (fDot < -0.7f)
 				{
-					if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
-					{
-						g_bullet.move.y *= -1;
-					}
+					g_bullet.bUse = false;
+					g_bullet.fSpeed = INIT_BULLET_SPEED;
+				}
+				else
+				{
+					float fAngle = atan2f(g_bullet.obj.pos.x - pPlayer->obj[nCntPlayer].pos.x, g_bullet.obj.pos.y - pPlayer->obj[nCntPlayer].pos.y);
 
-					if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
+					if (g_bUseReflection == true)
 					{
-						g_bullet.move.y *= -1;
-					}
+						g_bullet.move = Direction(pPlayer->obj[nCntPlayer].pos, g_bullet.obj.pos) * g_bullet.fSpeed;
 
-					if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
-					{
-						g_bullet.move.x *= -1;
-					}
+						g_bReflection = true;
 
-					if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
-					{
-						g_bullet.move.x *= -1;
+						g_bUseReflection = false;
 					}
-
-					g_bUseReflection = false;
 				}
 			}
 		}
+
 	}
 }
 
@@ -312,25 +304,9 @@ void CollisionEnemy(void)
 
 			if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, pEnemy->obj.pos, pEnemy->obj.size.x / 2) == true)
 			{
-				if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
-				{
-					g_bullet.move.y *= -1;
-				}
+				g_bullet.move = Direction(pEnemy->obj.pos, g_bullet.obj.pos) * g_bullet.fSpeed;
 
-				if (fAngle > (D3DX_PI * 0.75f) && fAngle <= (D3DX_PI * -0.75f))
-				{
-					g_bullet.move.y *= -1;
-				}
-
-				if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
-				{
-					g_bullet.move.x *= -1;
-				}
-
-				if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
-				{
-					g_bullet.move.x *= -1;
-				}
+				g_bReflection = true;
 
 				g_bUseReflection = false;
 
