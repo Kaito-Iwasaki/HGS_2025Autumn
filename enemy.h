@@ -29,6 +29,7 @@ typedef enum
 {
 	ENEMY_SPOWN_IN = 0,						// 中心から発散するように出現
 	ENEMY_SPOWN_OUT,						// 枠外から中心に収束するように出現
+	ENEMY_SPOWN_OTHER,						// 位置を指定し出現
 	ENEMY_SPOWN_MAX
 }ENEMY_SPOWN;
 

@@ -14,6 +14,7 @@
 // 
 //*********************************************************************
 
+#define ENEMY_SPD				(3.0f)		// 移動速度
 #define COUNTERSTATE_APPEAR		(60)		// 出現状態カウンター
 #define COUNTERSTATE_DAMAGE		(5)			// ダメージ状態カウンター
 
@@ -32,6 +33,7 @@ ENEMY g_aEnemy[MAX_ENEMY] = {};				// 敵の構造体
 // 
 //*********************************************************************
 
+void SpownOutOfScreen(ENEMY *pEnemy);
 
 //=====================================================================
 // 
@@ -104,7 +106,40 @@ void UpdateEnemy(void)
 	{
 		if (pEnemy->bUse == true)
 		{
-			
+			switch (pEnemy->spown)
+			{
+			case ENEMY_SPOWN_IN:
+				
+				if (IsObjectOutOfScreen(pEnemy->obj))
+				{
+					pEnemy->bUse = false;
+					pEnemy->obj.bVisible = false;
+				}
+
+				break;
+
+			case ENEMY_SPOWN_OUT:
+
+				if (pEnemy->obj.pos == D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f))
+				{
+					pEnemy->bUse = false;
+					pEnemy->obj.bVisible = false;
+				}
+
+				break;
+
+			default:
+
+				if (IsObjectOutOfScreen(pEnemy->obj))
+				{
+					pEnemy->bUse = false;
+					pEnemy->obj.bVisible = false;
+				}
+
+				break;
+			}
+
+			pEnemy->obj.pos += pEnemy->move;
 		}
 	}
 }
@@ -180,32 +215,40 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 size, int nHealth, 
 	{
 		if (pEnemy->bUse == false)
 		{ // 敵が使われていなければ設定 
-			pEnemy->obj.pos = pos;
 			pEnemy->obj.size = size;
 			pEnemy->obj.rot = rot;
 			pEnemy->obj.color = col;
 			pEnemy->obj.bInversed = bInversed;
 			pEnemy->obj.bVisible = true;
-			pEnemy->move = move;
 			pEnemy->state = ENEMYSTATE_APPEAR;
 			pEnemy->spown = spown;
 			switch (pEnemy->spown)
 			{
 			case ENEMY_SPOWN_IN:
+				pEnemy->obj.pos = D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f);
 
-				pEnemy->move.x = sinf((float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f)) * pEnemy->move.z;
-				pEnemy->move.y = cosf((float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f)) * pEnemy->move.z;
+				pEnemy->move.z = (float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f);
+
+				pEnemy->move.x = sinf(pEnemy->move.z) * ENEMY_SPD;
+				pEnemy->move.y = cosf(pEnemy->move.z) * ENEMY_SPD;
 
 				break;
 
 			case ENEMY_SPOWN_OUT:
 
-				pEnemy->move.x = sinf((float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f)) * pEnemy->move.z;
-				pEnemy->move.y = cosf((float)(RandRange(-(int)(D3DX_PI * 100.0f), (int)(D3DX_PI * 100.0f)) * 0.01f)) * pEnemy->move.z;
+				SpownOutOfScreen(pEnemy);
+
+				pEnemy->move.z = Angle(pEnemy->obj.pos, D3DXVECTOR3(SCREEN_CENTER, SCREEN_VCENTER, 0.0f));
+
+				pEnemy->move.x = sinf(pEnemy->move.z) * ENEMY_SPD;
+				pEnemy->move.y = cosf(pEnemy->move.z) * ENEMY_SPD;
 
 				break;
 
 			default:
+
+				pEnemy->obj.pos = pos;
+				pEnemy->move = move;
 
 				break;
 			}
@@ -258,4 +301,37 @@ void HitEnemy(ENEMY* pEnemy, int nDamage)
 		pEnemy->state = ENEMYSTATE_DAMAGE;				// ダメージ状態に
 		pEnemy->nCounterState = COUNTERSTATE_DAMAGE;	// カウンターセット
 	}
+}
+
+//=====================================================================
+// 
+// ***** 敵の画面外出現処理 *****
+// 
+//=====================================================================
+void SpownOutOfScreen(ENEMY* pEnemy)
+{
+	D3DXVECTOR3 pos;
+
+	// 出現位置を設定
+	int n = rand() % SCREEN_WIDTH;
+
+	pos.x = (float)n;
+
+	if (n == 0 || n == SCREEN_WIDTH)
+	{
+		pos.y = (float)(rand() % SCREEN_HEIGHT);
+	}
+	else
+	{
+		if (rand() % 2 == 0)
+		{
+			pos.y = 0.0f;
+		}
+		else
+		{
+			pos.y = (float)SCREEN_HEIGHT;
+		}
+	}
+	
+	pEnemy->obj.pos = pos;
 }
