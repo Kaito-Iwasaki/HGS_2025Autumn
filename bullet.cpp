@@ -5,6 +5,10 @@
 //
 //=====================================================================
 #include "bullet.h"
+#include "player.h"
+#include "enemy.h"
+#include "input.h"
+#include "collision.h"
 #include "util.h"
 
 //*********************************************************************
@@ -14,7 +18,7 @@
 //*********************************************************************
 #define BULLET_TEXTURE_FILENAME	NULL		// テクスチャファイル名
 
-#define INIT_BULLET_SIZE	D3DXVECTOR3 (150, 150, 0.0f)
+#define INIT_BULLET_SIZE	D3DXVECTOR3 (25, 25, 0.0f)
 #define INIT_BULLET_COLOR	D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)
 #define INIT_BULLET_SPEED	(10.0f)
 
@@ -47,7 +51,7 @@ void InitBullet(void)
 	g_bullet.obj.size = INIT_BULLET_SIZE;
 	g_bullet.obj.color = INIT_BULLET_COLOR;
 	g_bullet.bulletstate = BULLETSTATE_STOP;
-	g_bullet.fSpeed = INIT_BULLET_SPEED;
+	g_bullet.move = {};
 	g_bullet.bUse = false;
 
 	// テクスチャの読み込み
@@ -98,6 +102,11 @@ void UninitBullet(void)
 //=====================================================================
 void UpdateBullet(void)
 {
+	if (GetKeyboardTrigger(DIK_F1) == true)
+	{
+		SetEnemy(D3DXVECTOR3(50.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(30.0f, 30.0f, 0.0f), 3, ENEMY_SPOWN_OTHER, D3DXCOLOR_WHITE, false, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	}
+
 	if (g_bullet.bUse == true)
 	{// 使用されていたら
 
@@ -106,8 +115,8 @@ void UpdateBullet(void)
 		{
 		case BULLETSTATE_MOVE:
 			// 位置更新
-			g_bullet.obj.pos.x += sinf(g_bullet.obj.rot.z) * g_bullet.fSpeed;
-			g_bullet.obj.pos.y += cosf(g_bullet.obj.rot.z) * g_bullet.fSpeed;
+			g_bullet.obj.pos += g_bullet.move;
+			CollisionEnemy();
 			break;
 
 		case BULLETSTATE_STOP:
@@ -115,22 +124,16 @@ void UpdateBullet(void)
 		}
 
 		// 位置制限と反射
-		if (g_bullet.obj.pos.x <= 0 || g_bullet.obj.pos.x >= SCREEN_WIDTH ||
-			g_bullet.obj.pos.y <= 0 || g_bullet.obj.pos.x >= SCREEN_HEIGHT)
+		if (g_bullet.obj.pos.x <= 0 || g_bullet.obj.pos.x >= SCREEN_WIDTH)
 		{
 			Clampf(&g_bullet.obj.pos.x, 0, SCREEN_WIDTH);
-			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
-			g_bullet.obj.rot.z -= D3DX_PI;
+			g_bullet.move.x *= -1;
+		}
 
-			// 向きを補正
-			if (g_bullet.obj.rot.z < -D3DX_PI)
-			{
-				g_bullet.obj.rot.z += D3DX_PI * 2;
-			}
-			else if (g_bullet.obj.rot.z > D3DX_PI)
-			{
-				g_bullet.obj.rot.z -= D3DX_PI * 2;
-			}
+		if (g_bullet.obj.pos.y <= 0 || g_bullet.obj.pos.y >= SCREEN_HEIGHT)
+		{
+			Clampf(&g_bullet.obj.pos.y, 0, SCREEN_HEIGHT);
+			g_bullet.move.y *= -1;
 		}
 	}
 
@@ -168,16 +171,14 @@ void DrawBullet(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_bullet.bUse == true)
-	{
-		if (g_bullet.obj.bVisible == true)
-		{// ポリゴン描画
-			// テクスチャの設定
-			pDevice->SetTexture(0, g_pTexBuffBullet);
+	if (g_bullet.bUse == true && g_bullet.obj.bVisible == true)
+	{// ポリゴン描画
+		// テクスチャの設定
+		pDevice->SetTexture(0, g_pTexBuffBullet);
 
-			// ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-		}
+		// ポリゴンの描画
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		
 	}
 }
 
@@ -190,6 +191,11 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 	{// 使用されていなければ
 		g_bullet.obj.pos = pos;
 		g_bullet.obj.rot = rot;
+
+		g_bullet.move.x = rot.x * INIT_BULLET_SPEED;
+		g_bullet.move.y = rot.y * INIT_BULLET_SPEED;
+		g_bullet.move.z = rot.z;
+
 		g_bullet.bulletstate = BULLETSTATE_MOVE;
 		g_bullet.obj.bVisible = true;
 		g_bullet.bUse = true;
@@ -197,9 +203,31 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 }
 
 //=====================================================================
+// プレイヤーとの当たり判定処理
+//=====================================================================
+void CollisionPlayer(void)
+{
+	if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, D3DXVECTOR3(0.0f, 0.0f, 0.0f), 500) == true)
+	{
+		g_bullet.move.x *= -1;
+	}
+}
+
+//=====================================================================
 // 敵との当たり判定処理
 //=====================================================================
-bool CollisionEnemy()
+void CollisionEnemy(void)
 {
-	return false;
+	ENEMY* pEnemy = GetEnemy();
+
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
+	{
+		if (pEnemy->bUse == true)
+		{
+			if (CircleCollision(g_bullet.obj.pos, g_bullet.obj.size.x / 2, pEnemy->obj.pos, pEnemy->obj.size.x / 2) == true)
+			{
+				HitEnemy(pEnemy);
+			}
+		}
+	}
 }

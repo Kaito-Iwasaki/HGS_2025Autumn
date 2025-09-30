@@ -46,7 +46,7 @@ typedef struct
 {
 	BASEOBJECT obj;
 	BULLETSTATE bulletstate;
-	float fSpeed;
+	D3DXVECTOR3 move;
 	bool bUse;
 }BULLET;
 
@@ -60,5 +60,7 @@ void UninitBullet(void);
 void UpdateBullet(void);
 void DrawBullet(void);
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+void CollisionPlayer(void);
+void CollisionEnemy(void);
 
 #endif
