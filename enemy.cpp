@@ -121,6 +121,8 @@ void InitEnemy(void)
 //=====================================================================
 void UninitEnemy(void)
 {
+	free(&g_aEnemy[0]);
+
 	for (int n = 0; n < MAX_TEXTURE; n++)
 	{
 		if (g_apTexBuffEnemy[n] != NULL)
